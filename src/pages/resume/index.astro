@@ -58,46 +58,69 @@ const skillGroups = [
   {
     category: 'Frontend',
     skills: [
-      { name: 'React', detail: '사용자 흐름을 중심으로 화면 구조와 상태 흐름을 구현합니다.' },
-      { name: 'Next.js', detail: '제품 요구에 맞는 웹 애플리케이션 구조를 설계하고 구축합니다.' },
       {
-        name: 'TypeScript',
-        detail: '명확한 타입과 인터페이스로 유지보수 가능한 코드를 작성합니다.',
+        name: 'React / Next.js',
+        detail:
+          '사용자 흐름과 제품 요구에 맞는 화면 구조, 상태 흐름, 웹 애플리케이션 구조를 설계하고 구현합니다.',
+      },
+      {
+        name: 'Flutter',
+        detail: '웹뷰 기반의 하이브리드 앱 경험을 바탕으로 웹과 앱의 연결 흐름을 고려합니다.',
+      },
+      {
+        name: '웹표준',
+        detail:
+          '테크니컬 SEO와 다양한 유저 케이스를 고려해 접근 가능하고 검색 친화적인 웹을 구현합니다.',
       },
     ],
   },
   {
     category: 'Backend',
     skills: [
-      {
-        name: 'Node.js',
-        detail: '서비스 로직과 API 흐름을 구현하고 제품 요구사항을 서버 구조로 연결합니다.',
-      },
       { name: 'NestJS', detail: '모듈 기반의 백엔드 구조와 API 인터페이스를 설계합니다.' },
+      {
+        name: 'PostgreSQL',
+        detail:
+          '프로덕션 환경에서 데이터 모델링, 쿼리 설계, 트랜잭션을 고려한 데이터 구조를 다룹니다.',
+      },
       { name: 'TypeScript', detail: '백엔드 도메인 모델과 요청·응답 계약을 일관되게 관리합니다.' },
     ],
   },
   {
     category: 'Infrastructure',
     skills: [
-      { name: 'AWS', detail: '배포와 운영 조건을 고려한 클라우드 기반 서비스 구성을 다룹니다.' },
+      {
+        name: 'AWS',
+        detail:
+          'ECS, EC2, Lambda를 활용해 배포와 운영 조건을 고려한 클라우드 기반 서비스 구성을 다룹니다.',
+      },
       {
         name: 'Docker',
         detail: '개발과 배포 환경의 차이를 줄이기 위한 컨테이너 기반 실행 환경을 구성합니다.',
       },
+      {
+        name: 'IaC',
+        detail:
+          'AWS CDK와 Pulumi를 활용해 인프라 구성을 코드로 관리하고 재현 가능한 배포 환경을 구성합니다.',
+      },
     ],
   },
   {
-    category: 'Product / Delivery',
+    category: 'Additional Skills',
     skills: [
-      { name: '0→1 제품 개발', detail: '초기 아이디어를 출시 가능한 서비스 범위로 구체화합니다.' },
       {
-        name: '우선순위 조율',
-        detail: '사용자 가치와 비즈니스 목표를 기준으로 실행 순서를 정리합니다.',
+        name: 'Soft Skills',
+        detail:
+          '기획, 디자인, 운영 등 다른 팀원과의 협업을 바탕으로 문제를 정의하고 해결 방향을 찾아갑니다.',
       },
       {
-        name: '출시 실행',
-        detail: '기능 구현, 배포 조건, 개선 흐름을 연결해 제품 출시까지 추진합니다.',
+        name: 'Media',
+        detail:
+          '동영상 변환과 서빙, 이미지 압축 등 미디어 처리 흐름을 서비스 요구에 맞게 구성합니다.',
+      },
+      {
+        name: 'BLE',
+        detail: '블루투스 디바이스와의 연동 흐름을 이해하고 서비스 기능과 연결합니다.',
       },
     ],
   },
