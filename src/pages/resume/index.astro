@@ -2,45 +2,115 @@
 import '../../styles/global.css';
 
 const profile = {
-  name: 'Jaeyun Woo',
-  role: 'Software Engineer',
+  name: '우재윤',
+  role: '4년차 풀스택 개발자',
+  headline: '제품을 만들고 출시까지 이끄는 개발자',
   location: 'Seoul, Korea',
-  email: 'hello@example.com',
+  email: 'sunwjy00@gmail.com',
+  stack: ['Node.js', 'TypeScript', 'React', 'Next.js', 'NestJS', 'AWS', 'Docker'],
   links: [
     { label: 'GitHub', href: 'https://github.com/sunwjy' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/sunwjy/' },
   ],
 };
 
-const highlights = [
-  'Builds reliable web products with a strong bias toward simple systems.',
-  'Comfortable across frontend architecture, product UX, and delivery automation.',
-  'Interested in high-signal interfaces, maintainable codebases, and measurable outcomes.',
+const summary = [
+  '0→1 제품 개발 경험을 바탕으로 아이디어를 실제 서비스로 구현하고 출시까지 연결해왔습니다.',
+  'Node.js, TypeScript, React, Next.js, NestJS를 활용해 프론트엔드와 백엔드를 함께 설계합니다.',
+  'AWS와 Docker 기반의 배포·운영 환경을 고려하며 서비스가 지속적으로 개선될 수 있는 구조를 만듭니다.',
+  '사용자 가치와 비즈니스 목표를 함께 이해하고, 우선순위에 맞는 기술 선택과 실행 계획을 세웁니다.',
+  '기능 구현에 머무르지 않고 제품의 문제, 시스템 구조, 운영 흐름을 함께 살피며 완성도를 높입니다.',
+  '상황에 맞는 단순한 구조를 선택하고 유지보수 가능한 코드와 인터페이스를 만드는 데 집중합니다.',
 ];
 
-const experience = [
+const introductions = [
+  '프론트엔드, 백엔드, 인프라를 아우르는 관점에서 제품을 설계하고 구현합니다.',
+  '사용자가 겪는 문제와 제품의 비즈니스 목표를 함께 확인한 뒤, 현재 단계에 맞는 기술 범위와 구조를 정합니다.',
+  '빠른 출시가 필요한 상황에서는 핵심 흐름을 먼저 만들고, 운영 과정에서 반복 가능한 구조와 자동화 지점을 정리합니다.',
+  '협업 과정에서는 요구사항, API 인터페이스, 배포 조건을 명확히 맞추어 실행 가능한 단위로 일을 나누는 방식을 중요하게 생각합니다.',
+];
+
+const focusAreas = [
   {
-    company: 'Company Name',
-    role: 'Senior Software Engineer',
-    period: '2023 - Present',
+    title: '0→1 제품 개발',
+    description:
+      '아이디어를 실제 서비스로 전환하기 위해 핵심 사용자 흐름, 우선순위, 출시 범위를 정리하고 구현합니다.',
     points: [
-      'Led product-facing frontend architecture for a static-first web experience.',
-      'Improved build, lint, and release workflows for faster iteration.',
-      'Partnered with design and product teams to turn ambiguous requirements into shipped features.',
+      '사용자 가치 기반의 우선순위를 정하고 실행 가능한 개발 단위로 분리합니다.',
+      '초기 제품에 필요한 화면, API, 데이터 흐름을 함께 설계합니다.',
+      '출시 이후 개선이 가능하도록 단순하고 명확한 구조를 우선합니다.',
     ],
   },
   {
-    company: 'Previous Company',
-    role: 'Software Engineer',
-    period: '2020 - 2023',
+    title: '기술·비즈니스·사용자 관점의 설계',
+    description:
+      '제품 목표와 사용자 문제를 함께 이해한 뒤 상황에 맞는 기술 선택과 시스템 구조를 결정합니다.',
     points: [
-      'Built reusable UI patterns and content-driven pages with strong accessibility defaults.',
-      'Reduced maintenance overhead by simplifying shared components and styling conventions.',
+      '프론트엔드, 백엔드, 인프라의 경계를 고려해 기능 흐름을 설계합니다.',
+      '비즈니스 목표와 운영 조건을 반영하여 필요한 기술 범위를 조율합니다.',
+      '유지보수성과 확장성을 해치지 않는 선에서 빠르게 검증할 수 있는 구조를 선택합니다.',
+    ],
+  },
+  {
+    title: '출시와 운영을 고려한 구현',
+    description:
+      '서비스가 배포되고 운영되는 과정을 고려해 코드, 배포 환경, 협업 흐름을 함께 정리합니다.',
+    points: [
+      'AWS와 Docker 기반 환경을 고려해 배포 가능한 서비스 구조를 구성합니다.',
+      'API와 화면의 인터페이스를 명확히 정의하여 개발 과정의 불확실성을 줄입니다.',
+      '출시 이후 반복 개선이 가능하도록 문서화와 구조 정리를 병행합니다.',
     ],
   },
 ];
 
-const skills = ['Astro', 'TypeScript', 'Tailwind CSS', 'Design Systems', 'CI/CD', 'Testing'];
+const skillGroups = [
+  {
+    category: 'Frontend',
+    skills: [
+      { name: 'React', detail: '사용자 흐름을 중심으로 화면 구조와 상태 흐름을 구현합니다.' },
+      { name: 'Next.js', detail: '제품 요구에 맞는 웹 애플리케이션 구조를 설계하고 구축합니다.' },
+      {
+        name: 'TypeScript',
+        detail: '명확한 타입과 인터페이스로 유지보수 가능한 코드를 작성합니다.',
+      },
+    ],
+  },
+  {
+    category: 'Backend',
+    skills: [
+      {
+        name: 'Node.js',
+        detail: '서비스 로직과 API 흐름을 구현하고 제품 요구사항을 서버 구조로 연결합니다.',
+      },
+      { name: 'NestJS', detail: '모듈 기반의 백엔드 구조와 API 인터페이스를 설계합니다.' },
+      { name: 'TypeScript', detail: '백엔드 도메인 모델과 요청·응답 계약을 일관되게 관리합니다.' },
+    ],
+  },
+  {
+    category: 'Infrastructure',
+    skills: [
+      { name: 'AWS', detail: '배포와 운영 조건을 고려한 클라우드 기반 서비스 구성을 다룹니다.' },
+      {
+        name: 'Docker',
+        detail: '개발과 배포 환경의 차이를 줄이기 위한 컨테이너 기반 실행 환경을 구성합니다.',
+      },
+    ],
+  },
+  {
+    category: 'Product / Delivery',
+    skills: [
+      { name: '0→1 제품 개발', detail: '초기 아이디어를 출시 가능한 서비스 범위로 구체화합니다.' },
+      {
+        name: '우선순위 조율',
+        detail: '사용자 가치와 비즈니스 목표를 기준으로 실행 순서를 정리합니다.',
+      },
+      {
+        name: '출시 실행',
+        detail: '기능 구현, 배포 조건, 개선 흐름을 연결해 제품 출시까지 추진합니다.',
+      },
+    ],
+  },
+];
 ---
 
 <!doctype html>
@@ -49,72 +119,108 @@ const skills = ['Astro', 'TypeScript', 'Tailwind CSS', 'Design Systems', 'CI/CD'
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>{profile.name} | Resume</title>
+    <title>{profile.name} | 이력서</title>
     <meta
       name="description"
-      content={`${profile.name}의 정적 이력서 웹사이트입니다.`}
+      content={`${profile.name}의 ${profile.role} 이력서입니다.`}
     />
   </head>
   <body class="font-sans antialiased">
-    <main class="mx-auto grid min-h-screen w-full max-w-6xl gap-10 px-5 py-8 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14 lg:py-14">
+    <main class="mx-auto grid min-h-screen w-full max-w-6xl gap-10 px-5 py-8 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14 lg:py-14">
       <aside class="lg:sticky lg:top-14 lg:h-fit">
-        <div class="border-line bg-paper/70 rounded-lg border p-6 shadow-sm">
+        <div class="border-line bg-paper/80 rounded-lg border p-6 shadow-sm">
           <p class="text-accent text-sm font-semibold uppercase tracking-[0.18em]">
             Resume
           </p>
           <h1 class="mt-5 text-4xl font-semibold leading-tight text-balance sm:text-5xl">
             {profile.name}
           </h1>
-          <p class="mt-4 text-xl text-neutral-700">{profile.role}</p>
+          <p class="mt-4 text-xl font-medium text-neutral-800">{profile.role}</p>
           <p class="mt-2 text-sm text-neutral-600">{profile.location}</p>
+          <p class="mt-6 text-lg font-semibold leading-8 text-neutral-900">
+            {profile.headline}
+          </p>
 
           <div class="mt-8 flex flex-wrap gap-3">
             <a
               class="bg-accent hover:bg-accent-strong inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold text-white transition"
               href={`mailto:${profile.email}`}
             >
-              Email
+              이메일 보내기
             </a>
           </div>
 
-          <nav class="mt-8 flex flex-col gap-2 text-sm">
-            {
-              profile.links.map((link) => (
-                <a class="text-neutral-700 underline-offset-4 hover:text-accent hover:underline" href={link.href}>
-                  {link.label}
+          <dl class="mt-8 space-y-4 text-sm">
+            <div>
+              <dt class="font-semibold text-neutral-900">Email</dt>
+              <dd class="mt-1 text-neutral-700">
+                <a class="underline-offset-4 hover:text-accent hover:underline" href={`mailto:${profile.email}`}>
+                  {profile.email}
                 </a>
-              ))
-            }
-          </nav>
+              </dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-neutral-900">Links</dt>
+              <dd class="mt-2 flex flex-col gap-2">
+                {
+                  profile.links.map((link) => (
+                    <a class="text-neutral-700 underline-offset-4 hover:text-accent hover:underline" href={link.href}>
+                      {link.label}
+                    </a>
+                  ))
+                }
+              </dd>
+            </div>
+            <div>
+              <dt class="font-semibold text-neutral-900">Primary Stack</dt>
+              <dd class="mt-2 flex flex-wrap gap-2">
+                {
+                  profile.stack.map((item) => (
+                    <span class="border-line rounded-md border bg-white/60 px-2.5 py-1.5 text-xs font-medium text-neutral-800">
+                      {item}
+                    </span>
+                  ))
+                }
+              </dd>
+            </div>
+          </dl>
         </div>
       </aside>
 
       <section class="space-y-10">
         <section aria-labelledby="summary">
           <h2 id="summary" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
-            Summary
+            요약
           </h2>
           <div class="mt-4 space-y-3 text-lg leading-8 text-neutral-800">
-            {highlights.map((item) => <p>{item}</p>)}
+            {summary.map((item) => <p>{item}</p>)}
           </div>
         </section>
 
-        <section aria-labelledby="experience">
-          <h2 id="experience" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
-            Experience
+        <section aria-labelledby="introduction">
+          <h2 id="introduction" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
+            소개
+          </h2>
+          <div class="mt-4 space-y-3 leading-8 text-neutral-700">
+            {introductions.map((item) => <p>{item}</p>)}
+          </div>
+        </section>
+
+        <section aria-labelledby="focus">
+          <h2 id="focus" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
+            핵심 경험
           </h2>
           <div class="mt-5 divide-y divide-[var(--color-line)] border-y border-[var(--color-line)]">
             {
-              experience.map((job) => (
-                <article class="grid gap-4 py-6 sm:grid-cols-[10rem_1fr]">
+              focusAreas.map((area) => (
+                <article class="grid gap-4 py-6 sm:grid-cols-[11rem_1fr]">
                   <div>
-                    <p class="font-semibold">{job.period}</p>
-                    <p class="mt-1 text-sm text-neutral-600">{job.company}</p>
+                    <h3 class="text-lg font-semibold leading-7 text-neutral-900">{area.title}</h3>
                   </div>
                   <div>
-                    <h3 class="text-xl font-semibold">{job.role}</h3>
+                    <p class="leading-8 text-neutral-700">{area.description}</p>
                     <ul class="mt-3 list-disc space-y-2 pl-5 text-neutral-700">
-                      {job.points.map((point) => <li>{point}</li>)}
+                      {area.points.map((point) => <li>{point}</li>)}
                     </ul>
                   </div>
                 </article>
@@ -125,14 +231,22 @@ const skills = ['Astro', 'TypeScript', 'Tailwind CSS', 'Design Systems', 'CI/CD'
 
         <section aria-labelledby="skills">
           <h2 id="skills" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
-            Skills
+            기술 역량
           </h2>
-          <div class="mt-5 flex flex-wrap gap-2">
+          <div class="mt-5 grid gap-4 sm:grid-cols-2">
             {
-              skills.map((skill) => (
-                <span class="border-line rounded-md border bg-white/55 px-3 py-2 text-sm font-medium">
-                  {skill}
-                </span>
+              skillGroups.map((group) => (
+                <article class="border-line rounded-lg border bg-white/55 p-5">
+                  <h3 class="text-lg font-semibold text-neutral-900">{group.category}</h3>
+                  <dl class="mt-4 space-y-3">
+                    {group.skills.map((skill) => (
+                      <div>
+                        <dt class="font-semibold text-neutral-900">{skill.name}</dt>
+                        <dd class="mt-1 text-sm leading-6 text-neutral-700">{skill.detail}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
               ))
             }
           </div>
