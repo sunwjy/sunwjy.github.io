@@ -1,0 +1,20 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+.astro/
+outputs/
+
+# logs
+*.log
+.omx/
+
+# environment
+.env
+.env.*
+!.env.example
+
+# system
+.DS_Store

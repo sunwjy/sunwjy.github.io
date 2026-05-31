@@ -1,0 +1,44 @@
+---
+import '../styles/global.css';
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>sunwjy.github.io</title>
+    <meta name="description" content="Sunwjy의 GitHub Pages 웹사이트입니다." />
+  </head>
+  <body class="font-sans antialiased">
+    <main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center gap-8 px-5 py-10 sm:px-8">
+      <section class="max-w-3xl">
+        <p class="text-accent text-sm font-semibold uppercase tracking-[0.18em]">
+          sunwjy.github.io
+        </p>
+        <h1 class="mt-5 text-4xl font-semibold leading-tight text-balance sm:text-6xl">
+          Sunwjy
+        </h1>
+        <p class="mt-5 max-w-2xl text-lg leading-8 text-neutral-700">
+          Software engineering, product interfaces, and maintainable web systems.
+        </p>
+      </section>
+
+      <nav class="flex flex-wrap gap-3">
+        <a
+          class="bg-accent hover:bg-accent-strong inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold text-white transition"
+          href="/resume/"
+        >
+          Resume
+        </a>
+        <a
+          class="border-line inline-flex items-center justify-center rounded-md border bg-white/55 px-4 py-2 text-sm font-semibold text-neutral-800 transition hover:border-[var(--color-accent)] hover:text-accent"
+          href="https://github.com/sunwjy"
+        >
+          GitHub
+        </a>
+      </nav>
+    </main>
+  </body>
+</html>
