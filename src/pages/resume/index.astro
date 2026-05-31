@@ -117,70 +117,73 @@ const skillGroups = [
     />
   </head>
   <body class="font-sans antialiased">
-    <main class="mx-auto grid min-h-screen w-full max-w-6xl gap-10 px-5 py-8 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14 lg:py-14">
-      <aside class="lg:sticky lg:top-14 lg:h-fit">
-        <div class="border-line bg-paper/80 rounded-lg border p-6 shadow-sm">
-          <p class="text-accent text-sm font-semibold uppercase tracking-[0.18em]">
-            Resume
-          </p>
-          <h1 class="mt-5 text-4xl font-semibold leading-tight text-balance sm:text-5xl">
-            {profile.name}
-          </h1>
-          <p class="mt-4 text-xl font-medium text-neutral-800">{profile.role}</p>
-          <p class="mt-2 text-sm text-neutral-600">{profile.location}</p>
-          <p class="mt-6 text-lg font-semibold leading-8 text-neutral-900">
-            {profile.headline}
-          </p>
+    <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-10 px-5 py-8 sm:px-8 lg:py-14">
+      <header class="border-line bg-paper/80 rounded-lg border p-6 shadow-sm sm:p-8">
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.72fr)] lg:items-start">
+          <div>
+            <p class="text-accent text-sm font-semibold uppercase tracking-[0.18em]">
+              Resume
+            </p>
+            <h1 class="mt-5 text-4xl font-semibold leading-tight text-balance sm:text-5xl">
+              {profile.name}
+            </h1>
+            <p class="mt-4 text-xl font-medium text-neutral-800">{profile.role}</p>
+            <p class="mt-2 text-sm text-neutral-600">{profile.location}</p>
+            <p class="mt-6 max-w-3xl text-lg font-semibold leading-8 text-neutral-900">
+              {profile.headline}
+            </p>
+          </div>
 
-          <div class="mt-8 flex flex-wrap gap-3">
+          <div class="space-y-6 text-sm lg:border-l lg:border-line lg:pl-8">
             <a
               class="bg-accent hover:bg-accent-strong inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold text-white transition"
               href={`mailto:${profile.email}`}
             >
               이메일 보내기
             </a>
-          </div>
 
-          <dl class="mt-8 space-y-4 text-sm">
-            <div>
-              <dt class="font-semibold text-neutral-900">Email</dt>
-              <dd class="mt-1 text-neutral-700">
-                <a class="underline-offset-4 hover:text-accent hover:underline" href={`mailto:${profile.email}`}>
-                  {profile.email}
-                </a>
-              </dd>
-            </div>
-            <div>
-              <dt class="font-semibold text-neutral-900">Links</dt>
-              <dd class="mt-2 flex flex-col gap-2">
-                {
-                  profile.links.map((link) => (
-                    <a
-                      class="inline-flex items-center gap-2 text-neutral-700 underline-offset-4 hover:text-accent hover:underline"
-                      href={link.href}
-                    >
-                      <img class="h-4 w-4 object-contain" src={link.icon} alt="" aria-hidden="true" loading="lazy" />
-                      <span>{link.label}</span>
-                    </a>
-                  ))
-                }
-              </dd>
-            </div>
-            <div>
-              <dt class="font-semibold text-neutral-900">Primary Stack</dt>
-              <dd class="mt-2 flex flex-wrap gap-2">
-                {
-                  profile.stack.map((item) => (
-                    <span class="border-line rounded-md border bg-white/60 px-2.5 py-1.5 text-xs font-medium text-neutral-800">
-                      {item}
-                    </span>
-                  ))
-                }
-              </dd>
-            </div>
-          </dl>
+            <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-1">
+              <div>
+                <dt class="font-semibold text-neutral-900">Email</dt>
+                <dd class="mt-1 text-neutral-700">
+                  <a class="underline-offset-4 hover:text-accent hover:underline" href={`mailto:${profile.email}`}>
+                    {profile.email}
+                  </a>
+                </dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-neutral-900">Links</dt>
+                <dd class="mt-2 flex flex-wrap gap-3 lg:flex-col lg:gap-2">
+                  {
+                    profile.links.map((link) => (
+                      <a
+                        class="inline-flex items-center gap-2 text-neutral-700 underline-offset-4 hover:text-accent hover:underline"
+                        href={link.href}
+                      >
+                        <img class="h-4 w-4 object-contain" src={link.icon} alt="" aria-hidden="true" loading="lazy" />
+                        <span>{link.label}</span>
+                      </a>
+                    ))
+                  }
+                </dd>
+              </div>
+            </dl>
+          </div>
         </div>
-      </aside>
+
+        <section class="mt-8 border-t border-line pt-6" aria-labelledby="primary-stack">
+          <h2 id="primary-stack" class="text-sm font-semibold text-neutral-900">Primary Stack</h2>
+          <div class="mt-3 flex flex-wrap gap-2">
+            {
+              profile.stack.map((item) => (
+                <span class="border-line rounded-md border bg-white/60 px-2.5 py-1.5 text-xs font-medium text-neutral-800">
+                  {item}
+                </span>
+              ))
+            }
+          </div>
+        </section>
+      </header>
 
       <section class="space-y-10">
         <section aria-labelledby="introduction">
@@ -199,7 +202,7 @@ const skillGroups = [
           <div class="mt-5 divide-y divide-line border-y border-line">
             {
               focusAreas.map((area) => (
-                <article class="grid gap-4 py-6 sm:grid-cols-[11rem_1fr]">
+                <article class="grid gap-4 py-6 sm:grid-cols-[14rem_1fr] lg:grid-cols-[16rem_1fr]">
                   <div>
                     <h3 class="text-lg font-semibold leading-7 text-neutral-900">{area.title}</h3>
                   </div>
@@ -219,7 +222,7 @@ const skillGroups = [
           <h2 id="skills" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
             기술 역량
           </h2>
-          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+          <div class="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {
               skillGroups.map((group) => (
                 <article class="border-line rounded-lg border bg-white/55 p-5">
