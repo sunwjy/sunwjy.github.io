@@ -9,19 +9,10 @@ const profile = {
   email: 'sunwjy00@gmail.com',
   stack: ['Node.js', 'TypeScript', 'React', 'Next.js', 'NestJS', 'AWS', 'Docker'],
   links: [
-    { label: 'GitHub', href: 'https://github.com/sunwjy' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/sunwjy/' },
+    { label: 'GitHub', href: 'https://github.com/sunwjy', icon: '/github.png' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/sunwjy/', icon: '/linkedin.png' },
   ],
 };
-
-const summary = [
-  '0→1 제품 개발 경험을 바탕으로 아이디어를 실제 서비스로 구현하고 출시까지 연결해왔습니다.',
-  'Node.js, TypeScript, React, Next.js, NestJS를 활용해 프론트엔드와 백엔드를 함께 설계합니다.',
-  'AWS와 Docker 기반의 배포·운영 환경을 고려하며 서비스가 지속적으로 개선될 수 있는 구조를 만듭니다.',
-  '사용자 가치와 비즈니스 목표를 함께 이해하고, 우선순위에 맞는 기술 선택과 실행 계획을 세웁니다.',
-  '기능 구현에 머무르지 않고 제품의 문제, 시스템 구조, 운영 흐름을 함께 살피며 완성도를 높입니다.',
-  '상황에 맞는 단순한 구조를 선택하고 유지보수 가능한 코드와 인터페이스를 만드는 데 집중합니다.',
-];
 
 const introductions = [
   '프론트엔드, 백엔드, 인프라를 아우르는 관점에서 제품을 설계하고 구현합니다.',
@@ -164,8 +155,12 @@ const skillGroups = [
               <dd class="mt-2 flex flex-col gap-2">
                 {
                   profile.links.map((link) => (
-                    <a class="text-neutral-700 underline-offset-4 hover:text-accent hover:underline" href={link.href}>
-                      {link.label}
+                    <a
+                      class="inline-flex items-center gap-2 text-neutral-700 underline-offset-4 hover:text-accent hover:underline"
+                      href={link.href}
+                    >
+                      <img class="h-4 w-4 object-contain" src={link.icon} alt="" aria-hidden="true" loading="lazy" />
+                      <span>{link.label}</span>
                     </a>
                   ))
                 }
@@ -188,15 +183,6 @@ const skillGroups = [
       </aside>
 
       <section class="space-y-10">
-        <section aria-labelledby="summary">
-          <h2 id="summary" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
-            요약
-          </h2>
-          <div class="mt-4 space-y-3 text-lg leading-8 text-neutral-800">
-            {summary.map((item) => <p>{item}</p>)}
-          </div>
-        </section>
-
         <section aria-labelledby="introduction">
           <h2 id="introduction" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
             소개
@@ -210,7 +196,7 @@ const skillGroups = [
           <h2 id="focus" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
             핵심 경험
           </h2>
-          <div class="mt-5 divide-y divide-[var(--color-line)] border-y border-[var(--color-line)]">
+          <div class="mt-5 divide-y divide-line border-y border-line">
             {
               focusAreas.map((area) => (
                 <article class="grid gap-4 py-6 sm:grid-cols-[11rem_1fr]">

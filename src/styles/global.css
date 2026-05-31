@@ -6,14 +6,16 @@
   --color-ink: #1b1f24;
   --color-paper: #f8f7f3;
   --color-line: #d8d2c4;
-  --color-accent: #116149;
-  --color-accent-strong: #0b3f32;
+  --color-accent: #ff8000;
+  --color-accent-strong: #cc6600;
   --color-highlight: #c5482d;
 }
 
 html {
   background: var(--color-paper);
   color: var(--color-ink);
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 body {
