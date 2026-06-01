@@ -231,7 +231,7 @@ const skillGroups = [
     />
   </head>
   <body class="font-sans antialiased">
-    <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-16 px-5 py-10 sm:px-8 lg:gap-20 lg:py-16">
+    <main class="resume-root mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-16 px-5 py-10 sm:px-8 lg:gap-20 lg:py-16">
       <header class="border-line bg-paper/80 rounded-lg border p-6 shadow-sm sm:p-8">
         <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.72fr)] lg:items-start">
           <div>
@@ -250,7 +250,7 @@ const skillGroups = [
 
           <div class="space-y-6 text-sm lg:border-l lg:border-line lg:pl-8">
             <a
-              class="bg-accent hover:bg-accent-strong inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold text-white transition"
+              class="resume-email-button bg-accent hover:bg-accent-strong inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold text-white transition"
               href={`mailto:${profile.email}`}
             >
               이메일 보내기
@@ -299,7 +299,7 @@ const skillGroups = [
         </section>
       </header>
 
-      <section class="space-y-16 lg:space-y-20">
+      <section class="resume-content space-y-16 lg:space-y-20">
         <section aria-labelledby="introduction">
           <h2 id="introduction" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
             소개
@@ -332,7 +332,7 @@ const skillGroups = [
           </div>
         </section>
 
-        <section aria-labelledby="experience">
+        <section class="resume-print-section" aria-labelledby="experience">
           <h2 id="experience" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
             경력
           </h2>
@@ -387,7 +387,7 @@ const skillGroups = [
         </section>
 
 
-        <section aria-labelledby="additional-experience">
+        <section class="resume-print-section" aria-labelledby="additional-experience">
           <h2 id="additional-experience" class="text-sm font-semibold uppercase tracking-[0.18em] text-neutral-500">
             기타 경력
           </h2>

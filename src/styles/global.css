@@ -25,3 +25,80 @@ body {
 ::selection {
   background: color-mix(in oklab, var(--color-highlight) 28%, transparent);
 }
+
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 14mm;
+  }
+
+  html,
+  body {
+    background: white;
+  }
+
+  body {
+    min-width: 0;
+  }
+
+  .resume-email-button {
+    display: none;
+  }
+
+  .resume-root {
+    min-height: auto;
+    max-width: none;
+    gap: 12mm;
+    padding: 0;
+  }
+
+  header,
+  main > section > section,
+  article,
+  dl,
+  ul,
+  li,
+  .rounded-lg {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  dt {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .resume-print-section {
+    break-before: page;
+    page-break-before: always;
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  .resume-print-section > h2 {
+    break-after: avoid-page;
+    page-break-after: avoid;
+  }
+
+  .resume-print-section article,
+  .resume-print-section ul,
+  .resume-print-section li {
+    break-inside: auto;
+    page-break-inside: auto;
+  }
+
+  p,
+  li,
+  dd {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .resume-root > .resume-content {
+    gap: 12mm;
+  }
+}
