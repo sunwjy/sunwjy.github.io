@@ -1,5 +1,9 @@
 ---
 import '../styles/global.css';
+
+const prompt = '우재윤에 대해 소개해줘. 어떤 개발자인지 궁금해.';
+const intro =
+  '우재윤은 제품을 만들고 출시까지 이끄는 4년차 풀스택 개발자입니다. 프론트엔드, 백엔드, 인프라를 함께 이해하며 사용자 가치와 비즈니스 목표에 맞는 구조를 설계하고 구현합니다. React, Next.js, TypeScript, NestJS, AWS, Docker를 중심으로 0→1 제품 개발과 운영 가능한 웹 시스템 구축에 집중해 왔습니다.';
 ---
 
 <!doctype html>
@@ -8,37 +12,296 @@ import '../styles/global.css';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="generator" content={Astro.generator} />
-    <title>sunwjy.github.io</title>
-    <meta name="description" content="Sunwjy의 GitHub Pages 웹사이트입니다." />
+    <title>우재윤 | 제품을 출시까지 이끄는 풀스택 개발자</title>
+    <meta
+      name="description"
+      content="제품을 만들고 출시까지 이끄는 4년차 풀스택 개발자 우재윤의 포트폴리오입니다."
+    />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <style is:global>
+      .stream-token {
+        display: inline-block;
+        opacity: 0;
+        transform: translateY(0.32em) scale(0.99);
+        filter: blur(3px);
+        transition:
+          opacity 360ms ease-out,
+          transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
+          filter 360ms ease-out;
+        will-change: opacity, transform, filter;
+      }
+
+      .stream-token.is-visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+
+      .prompt-composer {
+        max-height: 14rem;
+        overflow: hidden;
+        will-change: max-height, opacity, transform;
+        transition:
+          max-height 520ms ease,
+          opacity 420ms ease,
+          transform 420ms ease;
+      }
+
+      [data-submit-button] {
+        box-shadow:
+          0 10px 24px color-mix(in oklab, var(--color-ink) 18%, transparent),
+          inset 0 1px 0 rgba(255, 255, 255, 0.22);
+        transform-origin: center;
+      }
+
+      .prompt-composer.is-submitting [data-submit-button] {
+        animation: submit-button-press 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      }
+
+      .js body[data-stage='submitted'] .prompt-composer,
+      .js body[data-stage='typing'] .prompt-composer,
+      .js body[data-stage='complete'] .prompt-composer {
+        max-height: 0;
+        opacity: 0;
+        transform: translateY(-1.25rem);
+        pointer-events: none;
+      }
+
+      .js body[data-stage='idle'] .submitted-chip,
+      .js body[data-stage='submitted'] .submitted-chip,
+      .js body[data-stage='idle'] .stream-shell,
+      .js body[data-stage='submitted'] .stream-shell {
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(0.75rem);
+        pointer-events: none;
+      }
+
+      .js body[data-stage='idle'] .cta-panel,
+      .js body[data-stage='submitted'] .cta-panel,
+      .js body[data-stage='typing'] .cta-panel {
+        visibility: hidden;
+        opacity: 0;
+        transform: translateY(0.75rem);
+        pointer-events: none;
+      }
+
+      .submitted-chip,
+      .stream-shell,
+      .cta-panel {
+        transition:
+          opacity 420ms ease,
+          transform 420ms ease;
+      }
+
+      @keyframes submit-button-press {
+        0% {
+          box-shadow:
+            0 10px 24px color-mix(in oklab, var(--color-ink) 18%, transparent),
+            inset 0 1px 0 rgba(255, 255, 255, 0.22);
+          transform: scale(1);
+        }
+
+        38% {
+          box-shadow:
+            0 5px 14px color-mix(in oklab, var(--color-ink) 14%, transparent),
+            inset 0 1px 0 rgba(255, 255, 255, 0.16);
+          transform: scale(0.9);
+        }
+
+        72% {
+          box-shadow:
+            0 14px 28px color-mix(in oklab, var(--color-ink) 20%, transparent),
+            inset 0 1px 0 rgba(255, 255, 255, 0.24);
+          transform: scale(1.03);
+        }
+
+        100% {
+          box-shadow:
+            0 10px 24px color-mix(in oklab, var(--color-ink) 18%, transparent),
+            inset 0 1px 0 rgba(255, 255, 255, 0.22);
+          transform: scale(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .stream-token {
+          opacity: 1;
+          transform: none;
+          filter: none;
+          transition: none;
+        }
+
+        .prompt-composer,
+        .prompt-composer.is-submitting [data-submit-button],
+        .submitted-chip,
+        .stream-shell,
+        .cta-panel {
+          transition: none;
+        }
+      }
+    </style>
   </head>
-  <body class="font-sans antialiased">
-    <main class="mx-auto flex min-h-screen w-full max-w-5xl flex-col justify-center gap-8 px-5 py-10 sm:px-8">
-      <section class="max-w-3xl">
-        <p class="text-accent text-sm font-semibold uppercase tracking-[0.18em]">
-          sunwjy.github.io
+  <body class="font-sans antialiased" data-stage="idle">
+    <main class="mx-auto grid min-h-screen w-full max-w-5xl grid-rows-[auto_1fr_auto] gap-6 px-5 py-7 sm:px-8 sm:py-10">
+      <header class="pt-4 text-center sm:pt-8">
+        <p class="text-highlight text-xs font-semibold uppercase tracking-[0.24em]">
+          sunwjy
         </p>
-        <h1 class="mt-5 text-4xl font-semibold leading-tight text-balance sm:text-6xl">
-          Sunwjy
+        <h1 class="mx-auto mt-4 max-w-3xl text-3xl font-semibold leading-tight text-balance text-ink sm:text-5xl">
+          무엇이든 물어보세요
         </h1>
-        <p class="mt-5 max-w-2xl text-lg leading-8 text-neutral-700">
-          Software engineering, product interfaces, and maintainable web systems.
-        </p>
+      </header>
+
+      <section class="flex flex-col justify-center gap-5 py-6" aria-label="우재윤 소개 프롬프트 데모">
+        <div class="prompt-composer mx-auto w-full max-w-3xl">
+          <div class="border-line overflow-hidden rounded-[1.75rem] border bg-white p-3">
+            <div
+              class="min-h-24 w-full bg-transparent px-4 py-4 text-left text-base leading-7 text-neutral-800 sm:px-5"
+              role="textbox"
+              aria-label="미리 입력된 소개 프롬프트"
+              aria-readonly="true"
+              tabindex="0"
+            >
+              {prompt}
+            </div>
+            <div class="flex items-center justify-between gap-3 px-2 pt-3 text-xs text-neutral-500">
+              <span>자동 온보딩 프롬프트</span>
+              <span
+                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink text-white"
+                data-submit-button
+                aria-hidden="true"
+              >
+                ↑
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="submitted-chip mx-auto flex w-full max-w-3xl justify-end" aria-hidden="true">
+          <div class="border-line rounded-2xl border bg-white/70 px-4 py-3 text-sm text-neutral-700 shadow-sm">
+            {prompt}
+          </div>
+        </div>
+
+        <article
+          class="stream-shell border-line bg-paper/75 mx-auto min-h-40 w-full max-w-3xl rounded-3xl border p-5 shadow-sm backdrop-blur sm:p-6"
+        >
+          <div class="mb-4 flex items-center gap-2 text-sm font-semibold text-neutral-700">
+            <span
+              class="bg-accent inline-flex h-7 w-7 items-center justify-center rounded-full text-white"
+              aria-hidden="true"
+            >
+              S
+            </span>
+            <span>sunwjy 소개</span>
+          </div>
+          <p
+            class="text-lg leading-8 text-neutral-800 sm:text-xl sm:leading-9"
+            data-stream-target
+            data-full-text={intro}
+          >
+            {intro}
+          </p>
+          <p class="sr-only" aria-live="polite" aria-atomic="true" data-status-target></p>
+        </article>
       </section>
 
-      <nav class="flex flex-wrap gap-3">
+      <nav
+        class="cta-panel flex flex-col items-center justify-center gap-3 pb-4 sm:flex-row sm:pb-8"
+        aria-label="주요 링크"
+      >
         <a
-          class="bg-accent hover:bg-accent-strong inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-semibold text-white transition"
+          class="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-highlight sm:w-auto"
           href="/resume/"
         >
-          Resume
+          이력서 보기
         </a>
         <a
-          class="border-line inline-flex items-center justify-center rounded-md border bg-white/55 px-4 py-2 text-sm font-semibold text-neutral-800 transition hover:border-accent hover:text-accent"
+          class="border-line inline-flex min-h-12 w-full items-center justify-center rounded-full border bg-white/65 px-6 text-sm font-semibold text-neutral-900 transition hover:border-highlight hover:text-highlight focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-highlight sm:w-auto"
           href="https://github.com/sunwjy"
+          rel="noreferrer"
         >
-          GitHub
+          GitHub 보기
         </a>
       </nav>
     </main>
+
+    <script is:inline>
+      const delay = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
+      const body = document.body;
+      const target = document.querySelector('[data-stream-target]');
+      const statusTarget = document.querySelector('[data-status-target]');
+      const ctaPanel = document.querySelector('.cta-panel');
+      const promptComposer = document.querySelector('.prompt-composer');
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      async function runIntro() {
+        if (!(target instanceof HTMLElement)) return;
+
+        if (ctaPanel instanceof HTMLElement) {
+          ctaPanel.inert = true;
+          ctaPanel.setAttribute('aria-hidden', 'true');
+        }
+
+        const fullText = target.dataset.fullText ?? target.textContent ?? '';
+        target.textContent = '';
+
+        await delay(prefersReducedMotion ? 250 : 3000);
+        if (!prefersReducedMotion && promptComposer instanceof HTMLElement) {
+          promptComposer.classList.add('is-submitting');
+          await delay(560);
+          promptComposer.classList.remove('is-submitting');
+          await delay(90);
+        }
+        body.dataset.stage = 'submitted';
+        await delay(prefersReducedMotion ? 0 : 560);
+        if (promptComposer instanceof HTMLElement) {
+          promptComposer.hidden = true;
+        }
+        body.dataset.stage = 'typing';
+        if (statusTarget instanceof HTMLElement) {
+          statusTarget.textContent = '우재윤 소개 답변을 작성하고 있습니다.';
+        }
+
+        if (prefersReducedMotion) {
+          target.textContent = fullText;
+          if (statusTarget instanceof HTMLElement) {
+            statusTarget.textContent = fullText;
+          }
+          if (ctaPanel instanceof HTMLElement) {
+            ctaPanel.inert = false;
+            ctaPanel.removeAttribute('aria-hidden');
+          }
+          body.dataset.stage = 'complete';
+          return;
+        }
+
+        for (const character of fullText) {
+          if (character === ' ') {
+            target.append(document.createTextNode(' '));
+            await delay(12);
+            continue;
+          }
+
+          const token = document.createElement('span');
+          token.className = 'stream-token';
+          token.textContent = character;
+          target.append(token);
+          window.requestAnimationFrame(() => token.classList.add('is-visible'));
+          await delay(28);
+        }
+        if (statusTarget instanceof HTMLElement) {
+          statusTarget.textContent = fullText;
+        }
+        if (ctaPanel instanceof HTMLElement) {
+          ctaPanel.inert = false;
+          ctaPanel.removeAttribute('aria-hidden');
+        }
+        body.dataset.stage = 'complete';
+      }
+
+      runIntro();
+    </script>
   </body>
 </html>
