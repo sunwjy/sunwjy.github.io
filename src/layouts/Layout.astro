@@ -1,0 +1,48 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'profile';
+  bodyClass?: string;
+  bodyStage?: string;
+}
+
+const {
+  title,
+  description,
+  type = 'website',
+  bodyClass = 'font-sans antialiased',
+  bodyStage,
+} = Astro.props;
+const canonicalUrl = Astro.url.href;
+const ogImageUrl = new URL('/og-image.png', Astro.site ?? Astro.url).href;
+---
+
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="sunwjy" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:alt" content="sunwjy" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <slot name="head" />
+  </head>
+  <body class={bodyClass} data-stage={bodyStage}>
+    <slot />
+  </body>
+</html>

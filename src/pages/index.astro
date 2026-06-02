@@ -1,22 +1,17 @@
 ---
-import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
 
 const prompt = '우재윤에 대해 소개해줘. 어떤 개발자인지 궁금해.';
 const intro =
   '우재윤은 제품을 만들고 출시까지 이끄는 4년차 풀스택 개발자입니다. 프론트엔드, 백엔드, 인프라를 함께 이해하며 사용자 가치와 비즈니스 목표에 맞는 구조를 설계하고 구현합니다. React, Next.js, TypeScript, NestJS, AWS, Docker를 중심으로 0→1 제품 개발과 운영 가능한 웹 시스템 구축에 집중해 왔습니다.';
 ---
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>우재윤 | 제품을 출시까지 이끄는 풀스택 개발자</title>
-    <meta
-      name="description"
-      content="제품을 만들고 출시까지 이끄는 4년차 풀스택 개발자 우재윤의 포트폴리오입니다."
-    />
+<Layout
+  title="우재윤 | 제품을 출시까지 이끄는 풀스택 개발자"
+  description="제품을 만들고 출시까지 이끄는 4년차 풀스택 개발자 우재윤의 포트폴리오입니다."
+  bodyStage="idle"
+>
+  <Fragment slot="head">
     <script is:inline>document.documentElement.classList.add('js');</script>
     <style is:global>
       .stream-token {
@@ -141,8 +136,7 @@ const intro =
         }
       }
     </style>
-  </head>
-  <body class="font-sans antialiased" data-stage="idle">
+  </Fragment>
     <main class="mx-auto grid min-h-screen w-full max-w-5xl grid-rows-[auto_1fr_auto] gap-6 px-5 py-7 sm:px-8 sm:py-10">
       <header class="pt-4 text-center sm:pt-8">
         <p class="text-highlight text-xs font-semibold uppercase tracking-[0.24em]">
@@ -303,5 +297,4 @@ const intro =
 
       runIntro();
     </script>
-  </body>
-</html>
+</Layout>

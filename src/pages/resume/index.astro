@@ -1,5 +1,5 @@
 ---
-import '../../styles/global.css';
+import Layout from '../../layouts/Layout.astro';
 
 const profile = {
   name: '우재윤',
@@ -218,19 +218,11 @@ const skillGroups = [
 ];
 ---
 
-<!doctype html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{profile.name} | 이력서</title>
-    <meta
-      name="description"
-      content="제품 기획부터 출시·운영까지 이끄는 4년차 풀스택 개발자 우재윤 이력서"
-    />
-  </head>
-  <body class="font-sans antialiased">
+<Layout
+  title={`${profile.name} | 이력서`}
+  description="제품 기획부터 출시·운영까지 이끄는 4년차 풀스택 개발자 우재윤 이력서"
+  type="profile"
+>
     <main class="resume-root mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-16 px-5 py-10 sm:px-8 lg:gap-20 lg:py-16">
       <header class="border-line bg-paper/80 rounded-lg border p-6 shadow-sm sm:p-8">
         <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.72fr)] lg:items-start">
@@ -490,5 +482,4 @@ const skillGroups = [
         </section>
       </section>
     </main>
-  </body>
-</html>
+</Layout>
