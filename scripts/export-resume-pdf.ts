@@ -1,11 +1,14 @@
 import { Buffer } from 'node:buffer';
+import type { ChildProcessByStdio } from 'node:child_process';
 import { spawn } from 'node:child_process';
 import { constants, createReadStream } from 'node:fs';
 import { access, mkdir, mkdtemp, readdir, rm, stat, writeFile } from 'node:fs/promises';
+import type { Server } from 'node:http';
 import { createServer } from 'node:http';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
+import type { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -23,9 +26,9 @@ const chromeCandidates = [
   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   '/Applications/Chromium.app/Contents/MacOS/Chromium',
   '/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary',
-].filter(Boolean);
+].filter((candidate): candidate is string => Boolean(candidate));
 
-async function isExecutable(command) {
+async function isExecutable(command: string): Promise<string | null> {
   if (command.includes(path.sep)) {
     try {
       await access(command, constants.X_OK);
@@ -48,7 +51,7 @@ async function isExecutable(command) {
   return null;
 }
 
-async function findChrome() {
+async function findChrome(): Promise<string> {
   for (const candidate of chromeCandidates) {
     const resolved = await isExecutable(candidate);
     if (resolved) return resolved;
@@ -59,7 +62,7 @@ async function findChrome() {
   );
 }
 
-function contentType(filePath) {
+function contentType(filePath: string): string {
   switch (path.extname(filePath)) {
     case '.css':
       return 'text/css; charset=utf-8';
@@ -81,7 +84,7 @@ function contentType(filePath) {
   }
 }
 
-function safeResolve(urlPath) {
+function safeResolve(urlPath: string): string | null {
   const decoded = decodeURIComponent(urlPath.split('?')[0] ?? '/');
   const normalized = path.normalize(decoded).replace(/^[/\\]+/, '');
   const requested = path.resolve(distDir, normalized);
@@ -90,7 +93,7 @@ function safeResolve(urlPath) {
   return requested;
 }
 
-async function fileForRequest(urlPath) {
+async function fileForRequest(urlPath: string): Promise<string | null> {
   let requested = safeResolve(urlPath);
   if (!requested) return null;
 
@@ -109,7 +112,7 @@ async function fileForRequest(urlPath) {
   }
 }
 
-function startStaticServer() {
+function startStaticServer(): Promise<{ server: Server; origin: string }> {
   const server = createServer(async (request, response) => {
     try {
       const filePath = await fileForRequest(request.url ?? '/');
@@ -140,7 +143,7 @@ function startStaticServer() {
   });
 }
 
-async function assertFetchOk(url, label) {
+async function assertFetchOk(url: string, label: string): Promise<Response> {
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`${label} is not reachable at ${url} (HTTP ${response.status}).`);
@@ -148,7 +151,7 @@ async function assertFetchOk(url, label) {
   return response;
 }
 
-async function requiredAssetPaths() {
+async function requiredAssetPaths(): Promise<string[]> {
   const assets = ['/github.png', '/linkedin.png'];
   const astroDir = path.join(distDir, '_astro');
   try {
@@ -161,24 +164,34 @@ async function requiredAssetPaths() {
   return assets;
 }
 
-function onceSocketOpen(socket) {
+function onceSocketOpen(socket: WebSocket): Promise<void> {
   return new Promise((resolve, reject) => {
-    socket.addEventListener('open', resolve, { once: true });
+    socket.addEventListener('open', () => resolve(), { once: true });
     socket.addEventListener('error', reject, { once: true });
   });
 }
 
-function sendDevToolsCommand(socket, method, params = {}) {
-  const id = sendDevToolsCommand.nextId++;
+type DevToolsParams = Record<string, unknown>;
+type DevToolsResult = Record<string, unknown>;
+type DevToolsMessage = { id?: number; result?: DevToolsResult; error?: { message?: string } };
+
+let devToolsCommandId = 1;
+
+function sendDevToolsCommand(
+  socket: WebSocket,
+  method: string,
+  params: DevToolsParams = {},
+): Promise<DevToolsResult> {
+  const id = devToolsCommandId++;
   socket.send(JSON.stringify({ id, method, params }));
 
   return new Promise((resolve, reject) => {
-    const onMessage = (event) => {
-      const message = JSON.parse(event.data);
+    const onMessage = (event: MessageEvent) => {
+      const message = JSON.parse(String(event.data)) as DevToolsMessage;
       if (message.id !== id) return;
       socket.removeEventListener('message', onMessage);
       if (message.error) {
-        reject(new Error(`${method} failed: ${message.error.message}`));
+        reject(new Error(`${method} failed: ${message.error.message ?? 'Unknown DevTools error'}`));
         return;
       }
       resolve(message.result ?? {});
@@ -188,23 +201,23 @@ function sendDevToolsCommand(socket, method, params = {}) {
   });
 }
 
-sendDevToolsCommand.nextId = 1;
+type ChromeTarget = { type?: string; webSocketDebuggerUrl?: string };
 
-async function waitForPageTarget(debugOrigin) {
+async function waitForPageTarget(debugOrigin: string): Promise<string> {
   const deadline = Date.now() + 10_000;
   while (Date.now() < deadline) {
     const response = await fetch(`${debugOrigin}/json/list`);
     if (response.ok) {
-      const targets = await response.json();
+      const targets = (await response.json()) as ChromeTarget[];
       const page = targets.find((target) => target.type === 'page' && target.webSocketDebuggerUrl);
-      if (page) return page.webSocketDebuggerUrl;
+      if (page?.webSocketDebuggerUrl) return page.webSocketDebuggerUrl;
     }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error('Timed out waiting for Chrome DevTools page target.');
 }
 
-async function waitForReadyState(socket) {
+async function waitForReadyState(socket: WebSocket): Promise<void> {
   const deadline = Date.now() + 15_000;
   while (Date.now() < deadline) {
     const result = await sendDevToolsCommand(socket, 'Runtime.evaluate', {
@@ -214,13 +227,14 @@ async function waitForReadyState(socket) {
       `,
       returnByValue: true,
     });
-    if (result.result?.value === true) return;
+    const runtimeResult = result.result as { value?: unknown } | undefined;
+    if (runtimeResult?.value === true) return;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
   throw new Error('Timed out waiting for resume page and images to finish loading.');
 }
 
-async function writeFullPagePdf(socket) {
+async function writeFullPagePdf(socket: WebSocket): Promise<void> {
   const result = await sendDevToolsCommand(socket, 'Page.printToPDF', {
     displayHeaderFooter: false,
     printBackground: true,
@@ -231,21 +245,23 @@ async function writeFullPagePdf(socket) {
     marginRight: 0,
   });
 
-  if (!result.data) {
+  if (typeof result.data !== 'string') {
     throw new Error('Chrome did not return PDF data.');
   }
 
   await writeFile(outputPdf, Buffer.from(result.data, 'base64'));
 }
 
-function waitForDevToolsEndpoint(child) {
+function waitForDevToolsEndpoint(
+  child: ChildProcessByStdio<null, null, Readable>,
+): Promise<string> {
   return new Promise((resolve, reject) => {
     let stderr = '';
     const timeout = setTimeout(() => {
       reject(new Error(`Timed out waiting for Chrome DevTools endpoint. ${stderr.trim()}`));
     }, 10_000);
 
-    child.stderr.on('data', (chunk) => {
+    child.stderr.on('data', (chunk: Buffer) => {
       stderr += chunk;
       const match = stderr.match(/DevTools listening on (ws:\/\/[^\s]+)/);
       if (!match) return;
@@ -269,7 +285,7 @@ function waitForDevToolsEndpoint(child) {
   });
 }
 
-async function runChrome(chromePath, resumeUrl) {
+async function runChrome(chromePath: string, resumeUrl: string): Promise<void> {
   const userDataDir = await mkdtemp(path.join(tmpdir(), 'resume-pdf-chrome-'));
   const args = [
     '--headless=new',
@@ -284,7 +300,7 @@ async function runChrome(chromePath, resumeUrl) {
   ];
 
   const child = spawn(chromePath, args, { stdio: ['ignore', 'ignore', 'pipe'] });
-  let socket;
+  let socket: WebSocket | undefined;
   try {
     const debugOrigin = await waitForDevToolsEndpoint(child);
     const pageWs = await waitForPageTarget(debugOrigin);
@@ -301,7 +317,7 @@ async function runChrome(chromePath, resumeUrl) {
   }
 }
 
-async function assertPdfCreated() {
+async function assertPdfCreated(): Promise<void> {
   const info = await stat(outputPdf);
   if (info.size < 1024) {
     throw new Error(`Generated PDF is unexpectedly small (${info.size} bytes): ${outputPdf}`);
@@ -320,7 +336,7 @@ async function assertPdfCreated() {
   }
 }
 
-async function main() {
+async function main(): Promise<void> {
   const chromePath = await findChrome();
   const resumeHtml = path.join(distDir, 'resume', 'index.html');
   await access(resumeHtml, constants.R_OK);
