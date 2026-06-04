@@ -6,8 +6,8 @@
   --color-ink: #1b1f24;
   --color-paper: #f8f7f3;
   --color-line: #d8d2c4;
-  --color-accent: #ff8000;
-  --color-accent-strong: #cc6600;
+  --color-accent: #b84a00;
+  --color-accent-strong: #a84000;
   --color-highlight: #c5482d;
 }
 
@@ -24,6 +24,12 @@ body {
 
 ::selection {
   background: color-mix(in oklab, var(--color-highlight) 28%, transparent);
+}
+
+.site-chrome {
+  @media print {
+    display: none;
+  }
 }
 
 @media print {

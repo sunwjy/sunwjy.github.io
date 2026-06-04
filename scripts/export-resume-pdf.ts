@@ -285,6 +285,31 @@ function waitForDevToolsEndpoint(
   });
 }
 
+function waitForProcessExit(child: ChildProcessByStdio<null, null, Readable>): Promise<void> {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    const timeout = setTimeout(resolve, 2_000);
+    child.once('exit', () => {
+      clearTimeout(timeout);
+      resolve();
+    });
+  });
+}
+
+async function removeDirectoryWithRetry(directory: string): Promise<void> {
+  const maxAttempts = 5;
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    try {
+      await rm(directory, { recursive: true, force: true });
+      return;
+    } catch (error) {
+      if (attempt === maxAttempts) throw error;
+      await new Promise((resolve) => setTimeout(resolve, attempt * 120));
+    }
+  }
+}
+
 async function runChrome(chromePath: string, resumeUrl: string): Promise<void> {
   const userDataDir = await mkdtemp(path.join(tmpdir(), 'resume-pdf-chrome-'));
   const args = [
@@ -313,7 +338,8 @@ async function runChrome(chromePath: string, resumeUrl: string): Promise<void> {
   } finally {
     if (socket) socket.close();
     if (!child.killed) child.kill('SIGTERM');
-    await rm(userDataDir, { recursive: true, force: true });
+    await waitForProcessExit(child);
+    await removeDirectoryWithRetry(userDataDir);
   }
 }
 
