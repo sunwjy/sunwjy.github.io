@@ -265,6 +265,7 @@ const skillGroups = [
                       <a
                         class="inline-flex items-center gap-2 text-neutral-700 underline-offset-4 hover:text-accent hover:underline"
                         href={link.href}
+                        rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
                       >
                         <img class="h-4 w-4 object-contain" src={link.icon} alt="" aria-hidden="true" loading="lazy" />
                         <span>{link.label}</span>
