@@ -15,6 +15,7 @@
     "export:experience-pdf": "astro build && node scripts/export-page-pdf.ts experience"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^6.4.2",
     "tailwindcss": "^4.3.0"
