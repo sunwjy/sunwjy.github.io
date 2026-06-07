@@ -47,13 +47,6 @@ body {
     min-width: 0;
   }
 
-  *,
-  ::before,
-  ::after {
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
   .resume-email-button {
     display: none;
   }

@@ -9,7 +9,6 @@ interface Props {
   type?: 'website' | 'profile';
   bodyClass?: string;
   bodyStage?: string;
-  hideSiteChrome?: boolean;
 }
 
 const {
@@ -18,7 +17,6 @@ const {
   type = 'website',
   bodyClass = 'font-sans antialiased',
   bodyStage,
-  hideSiteChrome = false,
 } = Astro.props;
 const canonicalUrl = Astro.url.href;
 const ogImageUrl = new URL('/og-image.png', Astro.site ?? Astro.url).href;
@@ -48,8 +46,8 @@ const ogImageUrl = new URL('/og-image.png', Astro.site ?? Astro.url).href;
     <slot name="head" />
   </head>
   <body class={bodyClass} data-stage={bodyStage}>
-    {!hideSiteChrome && <SiteHeader />}
+    <SiteHeader />
     <slot />
-    {!hideSiteChrome && <SiteFooter />}
+    <SiteFooter />
   </body>
 </html>
