@@ -47,6 +47,13 @@ body {
     min-width: 0;
   }
 
+  *,
+  ::before,
+  ::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
   .resume-email-button {
     display: none;
   }
@@ -102,6 +109,39 @@ body {
   dd {
     orphans: 3;
     widows: 3;
+  }
+
+  .experience-root {
+    display: block;
+    max-width: none;
+    padding: 0;
+  }
+
+  .experience-intro {
+    max-width: none;
+  }
+
+  .experience-projects {
+    display: block;
+    margin-top: 2.5rem;
+  }
+
+  .experience-card {
+    break-before: auto;
+    page-break-before: auto;
+    break-inside: avoid-page;
+    page-break-inside: avoid;
+    margin-bottom: 1.5rem;
+  }
+
+  .experience-card:first-of-type {
+    break-before: avoid-page;
+    page-break-before: avoid;
+  }
+
+  .experience-card:nth-of-type(3) {
+    break-before: page;
+    page-break-before: always;
   }
 
   .resume-root > .resume-content {

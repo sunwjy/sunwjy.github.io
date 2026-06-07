@@ -11,7 +11,8 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "check": "biome check . && astro check",
-    "export:resume-pdf": "astro build && node scripts/export-resume-pdf.ts"
+    "export:resume-pdf": "astro build && node scripts/export-page-pdf.ts resume",
+    "export:experience-pdf": "astro build && node scripts/export-page-pdf.ts experience"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.0",

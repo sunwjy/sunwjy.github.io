@@ -15,7 +15,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
 const distDir = path.join(rootDir, 'dist');
 const outputsDir = path.join(rootDir, 'outputs');
-const outputPdf = path.join(outputsDir, 'resume.pdf');
 
 const chromeCandidates = [
   process.env.CHROME_PATH,
@@ -151,8 +150,8 @@ async function assertFetchOk(url: string, label: string): Promise<Response> {
   return response;
 }
 
-async function requiredAssetPaths(): Promise<string[]> {
-  const assets = ['/github.png', '/linkedin.png'];
+async function requiredAssetPaths(extraAssetPaths: string[]): Promise<string[]> {
+  const assets = [...extraAssetPaths];
   const astroDir = path.join(distDir, '_astro');
   try {
     const entries = await readdir(astroDir);
@@ -217,7 +216,7 @@ async function waitForPageTarget(debugOrigin: string): Promise<string> {
   throw new Error('Timed out waiting for Chrome DevTools page target.');
 }
 
-async function waitForReadyState(socket: WebSocket): Promise<void> {
+async function waitForReadyState(socket: WebSocket, pageLabel: string): Promise<void> {
   const deadline = Date.now() + 15_000;
   while (Date.now() < deadline) {
     const result = await sendDevToolsCommand(socket, 'Runtime.evaluate', {
@@ -231,10 +230,10 @@ async function waitForReadyState(socket: WebSocket): Promise<void> {
     if (runtimeResult?.value === true) return;
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
-  throw new Error('Timed out waiting for resume page and images to finish loading.');
+  throw new Error(`Timed out waiting for ${pageLabel} and images to finish loading.`);
 }
 
-async function writeFullPagePdf(socket: WebSocket): Promise<void> {
+async function writeFullPagePdf(socket: WebSocket, outputPdf: string): Promise<void> {
   const result = await sendDevToolsCommand(socket, 'Page.printToPDF', {
     displayHeaderFooter: false,
     printBackground: true,
@@ -310,8 +309,13 @@ async function removeDirectoryWithRetry(directory: string): Promise<void> {
   }
 }
 
-async function runChrome(chromePath: string, resumeUrl: string): Promise<void> {
-  const userDataDir = await mkdtemp(path.join(tmpdir(), 'resume-pdf-chrome-'));
+async function runChrome(
+  chromePath: string,
+  pageUrl: string,
+  outputPdf: string,
+  pageLabel: string,
+): Promise<void> {
+  const userDataDir = await mkdtemp(path.join(tmpdir(), 'page-pdf-chrome-'));
   const args = [
     '--headless=new',
     '--disable-gpu',
@@ -332,9 +336,9 @@ async function runChrome(chromePath: string, resumeUrl: string): Promise<void> {
     socket = new WebSocket(pageWs);
     await onceSocketOpen(socket);
     await sendDevToolsCommand(socket, 'Page.enable');
-    await sendDevToolsCommand(socket, 'Page.navigate', { url: resumeUrl });
-    await waitForReadyState(socket);
-    await writeFullPagePdf(socket);
+    await sendDevToolsCommand(socket, 'Page.navigate', { url: pageUrl });
+    await waitForReadyState(socket, pageLabel);
+    await writeFullPagePdf(socket, outputPdf);
   } finally {
     if (socket) socket.close();
     if (!child.killed) child.kill('SIGTERM');
@@ -343,7 +347,7 @@ async function runChrome(chromePath: string, resumeUrl: string): Promise<void> {
   }
 }
 
-async function assertPdfCreated(): Promise<void> {
+async function assertPdfCreated(outputPdf: string): Promise<void> {
   const info = await stat(outputPdf);
   if (info.size < 1024) {
     throw new Error(`Generated PDF is unexpectedly small (${info.size} bytes): ${outputPdf}`);
@@ -362,28 +366,87 @@ async function assertPdfCreated(): Promise<void> {
   }
 }
 
-async function main(): Promise<void> {
+type ExportPagePdfOptions = {
+  route: `/${string}/`;
+  distSubdir: string;
+  outputFileName: string;
+  pageLabel: string;
+  requiredAssetPaths?: string[];
+};
+
+const pageConfigs = {
+  resume: {
+    route: '/resume/',
+    distSubdir: 'resume',
+    outputFileName: 'resume.pdf',
+    pageLabel: 'Resume page',
+    requiredAssetPaths: ['/github.png', '/linkedin.png'],
+  },
+  experience: {
+    route: '/experience/',
+    distSubdir: 'experience',
+    outputFileName: 'experience.pdf',
+    pageLabel: 'Experience page',
+    requiredAssetPaths: ['/github.png', '/linkedin.png'],
+  },
+} satisfies Record<string, ExportPagePdfOptions>;
+
+type PageName = keyof typeof pageConfigs;
+
+function isPageName(value: string | undefined): value is PageName {
+  return value !== undefined && value in pageConfigs;
+}
+
+function usage(): string {
+  return `Usage: node scripts/export-page-pdf.ts <${Object.keys(pageConfigs).join('|')}>`;
+}
+
+export function optionsForPage(pageName: PageName): ExportPagePdfOptions {
+  return pageConfigs[pageName];
+}
+
+export async function exportPagePdf({
+  route,
+  distSubdir,
+  outputFileName,
+  pageLabel,
+  requiredAssetPaths: requiredAssets = [],
+}: ExportPagePdfOptions): Promise<void> {
   const chromePath = await findChrome();
-  const resumeHtml = path.join(distDir, 'resume', 'index.html');
-  await access(resumeHtml, constants.R_OK);
+  const pageHtml = path.join(distDir, distSubdir, 'index.html');
+  const outputPdf = path.join(outputsDir, outputFileName);
+  await access(pageHtml, constants.R_OK);
   await mkdir(outputsDir, { recursive: true });
 
   const { server, origin } = await startStaticServer();
   try {
-    const resumeUrl = `${origin}/resume/`;
-    await assertFetchOk(resumeUrl, 'Resume page');
-    for (const assetPath of await requiredAssetPaths()) {
+    const pageUrl = `${origin}${route}`;
+    await assertFetchOk(pageUrl, pageLabel);
+    for (const assetPath of await requiredAssetPaths(requiredAssets)) {
       await assertFetchOk(`${origin}${assetPath}`, `Built asset ${assetPath}`);
     }
-    await runChrome(chromePath, resumeUrl);
-    await assertPdfCreated();
-    console.log(`Resume PDF written to ${path.relative(rootDir, outputPdf)}`);
+    await runChrome(chromePath, pageUrl, outputPdf, pageLabel);
+    await assertPdfCreated(outputPdf);
+    console.log(
+      `${pageLabel.replace(/ page$/i, '')} PDF written to ${path.relative(rootDir, outputPdf)}`,
+    );
   } finally {
     server.close();
   }
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : error);
-  process.exit(1);
-});
+async function main(): Promise<void> {
+  const pageName = process.argv[2];
+  if (!isPageName(pageName)) {
+    throw new Error(`${usage()}\nUnknown page: ${pageName ?? '(missing)'}`);
+  }
+
+  await exportPagePdf(optionsForPage(pageName));
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : error);
+    process.exit(1);
+  });
+}
