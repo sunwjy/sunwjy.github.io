@@ -13,216 +13,71 @@ const intro =
 >
   <Fragment slot="head">
     <script is:inline>document.documentElement.classList.add('js');</script>
-    <style is:global>
-      .stream-token {
-        display: inline-block;
-        opacity: 0;
-        transform: translateY(0.32em) scale(0.99);
-        filter: blur(3px);
-        transition:
-          opacity 360ms ease-out,
-          transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1),
-          filter 360ms ease-out;
-        will-change: opacity, transform, filter;
-      }
-
-      .stream-token.is-visible {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-        filter: blur(0);
-      }
-
-      .prompt-composer {
-        max-height: 14rem;
-        overflow: hidden;
-        will-change: max-height, opacity, transform;
-        transition:
-          max-height 520ms ease,
-          opacity 420ms ease,
-          transform 420ms ease;
-      }
-
-      [data-submit-button] {
-        box-shadow:
-          0 10px 24px color-mix(in oklab, var(--color-ink) 18%, transparent),
-          inset 0 1px 0 rgba(255, 255, 255, 0.22);
-        transform-origin: center;
-      }
-
-      .prompt-composer.is-submitting [data-submit-button] {
-        animation: submit-button-press 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-      }
-
-      .js body[data-stage='submitted'] .prompt-composer,
-      .js body[data-stage='typing'] .prompt-composer,
-      .js body[data-stage='complete'] .prompt-composer {
-        max-height: 0;
-        opacity: 0;
-        transform: translateY(-1.25rem);
-        pointer-events: none;
-      }
-
-      .js body[data-stage='idle'] .submitted-chip,
-      .js body[data-stage='submitted'] .submitted-chip,
-      .js body[data-stage='idle'] .stream-shell,
-      .js body[data-stage='submitted'] .stream-shell {
-        visibility: hidden;
-        opacity: 0;
-        transform: translateY(0.75rem);
-        pointer-events: none;
-      }
-
-      .js body[data-stage='idle'] .cta-panel,
-      .js body[data-stage='submitted'] .cta-panel,
-      .js body[data-stage='typing'] .cta-panel {
-        visibility: hidden;
-        opacity: 0;
-        transform: translateY(0.75rem);
-        pointer-events: none;
-      }
-
-      .home-intro,
-      .submitted-chip,
-      .stream-shell,
-      .cta-panel {
-        transition:
-          opacity 420ms ease,
-          transform 420ms ease;
-      }
-
-      .home-stage {
-        position: relative;
-      }
-
-      .home-intro {
-        width: min(100%, 48rem);
-        max-height: 12rem;
-        margin-top: min(8svh, 5rem);
-        margin-bottom: min(4svh, 2.5rem);
-        overflow: hidden;
-        transition:
-          max-height 520ms ease,
-          opacity 420ms ease,
-          transform 420ms ease;
-      }
-
-      .js body[data-stage='submitted'] .home-stage,
-      .js body[data-stage='typing'] .home-stage,
-      .js body[data-stage='complete'] .home-stage {
-        justify-content: center;
-      }
-
-      .js body[data-stage='submitted'] .home-intro,
-      .js body[data-stage='typing'] .home-intro,
-      .js body[data-stage='complete'] .home-intro {
-        max-height: 0;
-        margin-top: 0;
-        margin-bottom: 0;
-        opacity: 0;
-        transform: translateY(-1rem);
-        pointer-events: none;
-      }
-
-      .js body[data-stage='idle'] .submitted-chip,
-      .js body[data-stage='idle'] .stream-shell,
-      .js body[data-stage='idle'] .cta-panel,
-      .js body[data-stage='submitted'] .stream-shell,
-      .js body[data-stage='submitted'] .cta-panel,
-      .js body[data-stage='typing'] .cta-panel {
-        position: absolute;
-      }
-
-      @keyframes submit-button-press {
-        0% {
-          box-shadow:
-            0 10px 24px color-mix(in oklab, var(--color-ink) 18%, transparent),
-            inset 0 1px 0 rgba(255, 255, 255, 0.22);
-          transform: scale(1);
-        }
-
-        38% {
-          box-shadow:
-            0 5px 14px color-mix(in oklab, var(--color-ink) 14%, transparent),
-            inset 0 1px 0 rgba(255, 255, 255, 0.16);
-          transform: scale(0.9);
-        }
-
-        72% {
-          box-shadow:
-            0 14px 28px color-mix(in oklab, var(--color-ink) 20%, transparent),
-            inset 0 1px 0 rgba(255, 255, 255, 0.24);
-          transform: scale(1.03);
-        }
-
-        100% {
-          box-shadow:
-            0 10px 24px color-mix(in oklab, var(--color-ink) 18%, transparent),
-            inset 0 1px 0 rgba(255, 255, 255, 0.22);
-          transform: scale(1);
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .stream-token {
-          opacity: 1;
-          transform: none;
-          filter: none;
-          transition: none;
-        }
-
-        .prompt-composer,
-        .prompt-composer.is-submitting [data-submit-button],
-        .home-intro,
-        .submitted-chip,
-        .stream-shell,
-        .cta-panel {
-          transition: none;
-        }
-      }
-    </style>
   </Fragment>
-    <main class="mx-auto flex min-h-[calc(100svh-4.5rem)] w-full max-w-5xl flex-col px-5 py-8 sm:px-8 sm:py-10">
-      <section class="home-stage flex flex-1 -translate-y-8 flex-col items-center justify-start gap-4 py-10" aria-label="우재윤 소개 프롬프트 데모">
-        <header class="home-intro mb-4 text-center sm:mb-6">
-          <p class="text-accent text-xs font-semibold uppercase tracking-[0.24em]">
-            sunwjy
-          </p>
-          <h1 class="mx-auto mt-4 max-w-3xl text-3xl font-semibold leading-tight text-balance text-ink sm:text-5xl">
-            무엇이든 물어보세요
-          </h1>
-        </header>
-        <div class="prompt-composer mx-auto w-full max-w-3xl">
-          <div class="border-line overflow-hidden rounded-[1.75rem] border bg-white p-3">
-            <div
-              class="min-h-24 w-full bg-transparent px-4 py-4 text-left text-base leading-7 text-neutral-800 sm:px-5"
-              role="textbox"
-              aria-label="미리 입력된 소개 프롬프트"
-              aria-readonly="true"
-              tabindex="0"
+
+  <main class="mx-auto flex min-h-[calc(100svh-4.5rem)] w-full max-w-5xl flex-col px-5 py-8 sm:px-8 sm:py-10">
+    <section
+      class="home-stage flex flex-1 -translate-y-8 flex-col items-center justify-start gap-4 py-10"
+      aria-label="우재윤 소개 프롬프트 데모"
+    >
+      <header class="home-intro mb-4 text-center sm:mb-6" data-home-intro>
+        <p class="text-accent text-xs font-semibold uppercase tracking-[0.24em]">
+          sunwjy
+        </p>
+        <h1 class="mx-auto mt-4 max-w-3xl text-3xl font-semibold leading-tight text-balance text-ink sm:text-5xl">
+          무엇이든 물어보세요
+        </h1>
+      </header>
+      <div class="prompt-composer mx-auto w-full max-w-3xl" data-prompt-composer>
+        <div class="border-line overflow-hidden rounded-[1.75rem] border bg-white p-3 shadow-sm">
+          <div
+            class="min-h-24 w-full bg-transparent px-4 py-4 text-left text-base leading-7 text-neutral-800 sm:px-5"
+            role="textbox"
+            aria-label="미리 입력된 소개 프롬프트"
+            aria-readonly="true"
+            tabindex="0"
+          >
+            {prompt}
+          </div>
+          <div class="flex items-center justify-between gap-3 px-2 pt-3 text-xs text-neutral-500">
+            <span>자동 온보딩 프롬프트</span>
+            <span
+              class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink text-white"
+              data-submit-button
+              aria-hidden="true"
             >
-              {prompt}
-            </div>
-            <div class="flex items-center justify-between gap-3 px-2 pt-3 text-xs text-neutral-500">
-              <span>자동 온보딩 프롬프트</span>
-              <span
-                class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-ink text-white"
-                data-submit-button
-                aria-hidden="true"
-              >
-                ↑
-              </span>
-            </div>
+              ↑
+            </span>
           </div>
         </div>
+      </div>
 
-        <div class="submitted-chip mx-auto flex w-full max-w-3xl justify-end" aria-hidden="true">
-          <div class="border-line rounded-2xl border bg-white/70 px-4 py-3 text-sm text-neutral-700 shadow-sm">
+      <div class="chat-transcript mx-auto flex w-full max-w-3xl flex-col gap-4" data-chat-transcript>
+        <article
+          class="stream-shell stream-pretext border-line bg-paper/80 w-full rounded-3xl border p-5 shadow-sm backdrop-blur sm:p-6"
+          aria-hidden="true"
+          data-stream-pretext
+        >
+          <div class="mb-4 flex items-center gap-2 text-sm font-semibold text-neutral-700">
+            <span class="bg-accent inline-flex h-7 w-7 items-center justify-center rounded-full text-white">
+              S
+            </span>
+            <span>sunwjy 소개</span>
+          </div>
+          <p class="text-lg leading-8 text-neutral-800 sm:text-xl sm:leading-9" data-pretext-target>
+            {intro}
+          </p>
+        </article>
+
+        <div class="submitted-chip flex w-full justify-end" aria-hidden="true" data-submitted-chip>
+          <div class="border-line rounded-2xl border bg-white/80 px-4 py-3 text-sm leading-6 text-neutral-700 shadow-sm backdrop-blur">
             {prompt}
           </div>
         </div>
 
         <article
-          class="stream-shell border-line bg-paper/75 mx-auto min-h-40 w-full max-w-3xl rounded-3xl border p-5 shadow-sm backdrop-blur sm:p-6"
+          class="stream-shell border-line bg-paper/80 w-full rounded-3xl border p-5 shadow-sm backdrop-blur sm:p-6"
+          data-stream-shell
         >
           <div class="mb-4 flex items-center gap-2 text-sm font-semibold text-neutral-700">
             <span
@@ -245,98 +100,348 @@ const intro =
         <nav
           class="cta-panel mt-5 flex flex-col items-center justify-center gap-3 sm:mt-6 sm:flex-row"
           aria-label="주요 링크"
+          data-cta-panel
         >
-        <a
-          class="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-highlight sm:w-auto"
-          href="/resume/"
-        >
-          이력서 보기
-        </a>
-        <a
-          class="border-line inline-flex min-h-12 w-full items-center justify-center rounded-full border bg-white/65 px-6 text-sm font-semibold text-neutral-900 transition hover:border-highlight hover:text-highlight focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-highlight sm:w-auto"
-          href="https://github.com/sunwjy"
-          rel="noreferrer"
-        >
-          GitHub 보기
-        </a>
+          <a
+            class="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-ink px-6 text-sm font-semibold text-white transition hover:bg-neutral-800 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-highlight sm:w-auto"
+            href="/resume/"
+          >
+            이력서 보기
+          </a>
+          <a
+            class="border-line inline-flex min-h-12 w-full items-center justify-center rounded-full border bg-white/65 px-6 text-sm font-semibold text-neutral-900 transition hover:border-highlight hover:text-highlight focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-highlight sm:w-auto"
+            href="https://github.com/sunwjy"
+            rel="noreferrer"
+          >
+            GitHub 보기
+          </a>
         </nav>
-      </section>
-    </main>
+      </div>
+    </section>
+  </main>
 
-    <script is:inline>
-      const delay = (ms) => new Promise((resolve) => window.setTimeout(resolve, ms));
-      const body = document.body;
-      const target = document.querySelector('[data-stream-target]');
-      const statusTarget = document.querySelector('[data-status-target]');
-      const ctaPanel = document.querySelector('.cta-panel');
-      const promptComposer = document.querySelector('.prompt-composer');
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  <script>
+    import { animate, stagger } from 'motion';
 
-      async function runIntro() {
-        if (!(target instanceof HTMLElement)) return;
+    const delay = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
+    const body = document.body;
+    const introBlock = document.querySelector('[data-home-intro]');
+    const target = document.querySelector('[data-stream-target]');
+    const statusTarget = document.querySelector('[data-status-target]');
+    const ctaPanel = document.querySelector('[data-cta-panel]');
+    const promptComposer = document.querySelector('[data-prompt-composer]');
+    const submitButton = document.querySelector('[data-submit-button]');
+    const submittedChip = document.querySelector('[data-submitted-chip]');
+    const streamShell = document.querySelector('[data-stream-shell]');
+    const streamPretext = document.querySelector('[data-stream-pretext]');
+    const pretextTarget = document.querySelector('[data-pretext-target]');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-        if (ctaPanel instanceof HTMLElement) {
-          ctaPanel.inert = true;
-          ctaPanel.setAttribute('aria-hidden', 'true');
+    function waitForAnimation(animation: { finished: Promise<unknown> }, fallbackMs: number) {
+      return Promise.race([animation.finished, delay(fallbackMs)]);
+    }
+
+    function syncIntroBubbleHeight(text: string) {
+      if (
+        !(streamShell instanceof HTMLElement)
+        || !(streamPretext instanceof HTMLElement)
+        || !(pretextTarget instanceof HTMLElement)
+      ) {
+        return;
+      }
+
+      pretextTarget.textContent = text;
+      streamShell.style.height = `${Math.ceil(streamPretext.getBoundingClientRect().height)}px`;
+    }
+
+    function setSubmittedChipAccessible(isAccessible: boolean) {
+      if (!(submittedChip instanceof HTMLElement)) return;
+
+      if (isAccessible) {
+        submittedChip.removeAttribute('aria-hidden');
+        return;
+      }
+
+      submittedChip.setAttribute('aria-hidden', 'true');
+    }
+
+    function setCtaInteractive(isInteractive: boolean) {
+      if (!(ctaPanel instanceof HTMLElement)) return;
+
+      ctaPanel.inert = !isInteractive;
+      if (isInteractive) {
+        ctaPanel.removeAttribute('aria-hidden');
+        return;
+      }
+
+      ctaPanel.setAttribute('aria-hidden', 'true');
+    }
+
+    function renderStreamTokens(element: HTMLElement, text: string) {
+      element.textContent = '';
+      return Array.from(text).map((character) => {
+        if (character === ' ') {
+          element.append(document.createTextNode(' '));
+          return null;
         }
 
-        const fullText = target.dataset.fullText ?? target.textContent ?? '';
+        const token = document.createElement('span');
+        token.className = 'stream-token';
+        token.textContent = character;
+        element.append(token);
+        return token;
+      }).filter((token): token is HTMLSpanElement => token !== null);
+    }
+
+    function revealFinalState(fullText: string) {
+      if (target instanceof HTMLElement) target.textContent = fullText;
+      if (promptComposer instanceof HTMLElement) promptComposer.hidden = true;
+      if (introBlock instanceof HTMLElement) introBlock.hidden = true;
+
+      for (const element of [submittedChip, streamShell, ctaPanel]) {
+        if (element instanceof HTMLElement) {
+          element.style.visibility = 'visible';
+          element.style.position = 'static';
+          element.style.opacity = '1';
+          element.style.transform = 'none';
+          element.style.filter = 'none';
+        }
+      }
+
+      if (statusTarget instanceof HTMLElement) statusTarget.textContent = fullText;
+      body.dataset.stage = 'complete';
+      setSubmittedChipAccessible(true);
+      setCtaInteractive(true);
+    }
+
+    async function runIntro() {
+      if (!(target instanceof HTMLElement)) return;
+
+      const fullText = target.dataset.fullText ?? target.textContent ?? '';
+
+      try {
+        syncIntroBubbleHeight(fullText);
+        document.fonts?.ready.then(() => syncIntroBubbleHeight(fullText));
+        window.addEventListener('resize', () => syncIntroBubbleHeight(fullText), { passive: true });
+
+        setCtaInteractive(false);
+        setSubmittedChipAccessible(false);
         target.textContent = '';
 
-        await delay(prefersReducedMotion ? 250 : 3000);
-        if (!prefersReducedMotion && promptComposer instanceof HTMLElement) {
-          promptComposer.classList.add('is-submitting');
-          await delay(560);
-          promptComposer.classList.remove('is-submitting');
-          await delay(90);
+        if (prefersReducedMotion) {
+          await delay(250);
+          revealFinalState(fullText);
+          return;
         }
+
+        await delay(1600);
+
+        if (submitButton instanceof HTMLElement) {
+          await waitForAnimation(
+            animate(
+              submitButton,
+              { scale: [1, 0.9, 1.04, 1] },
+              { duration: 0.48, ease: ['easeOut', 'easeInOut', 'easeOut'] },
+            ),
+            560,
+          );
+        }
+
+        const exitTargets = [introBlock, promptComposer].filter(
+          (element): element is Element => element instanceof Element,
+        );
+
+        await waitForAnimation(
+          animate(
+            exitTargets,
+            { opacity: [1, 0], y: [0, -22], scale: [1, 0.985] },
+            { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
+          ),
+          500,
+        );
+
+        if (promptComposer instanceof HTMLElement) promptComposer.hidden = true;
+        if (introBlock instanceof HTMLElement) introBlock.hidden = true;
+
         body.dataset.stage = 'submitted';
-        await delay(prefersReducedMotion ? 0 : 560);
-        if (promptComposer instanceof HTMLElement) {
-          promptComposer.hidden = true;
+        setSubmittedChipAccessible(true);
+
+        if (submittedChip instanceof HTMLElement) {
+          submittedChip.style.visibility = 'visible';
+          submittedChip.style.position = 'static';
+          await waitForAnimation(
+            animate(
+              submittedChip,
+              { opacity: [0, 1], x: [24, 0], y: [12, 0] },
+              { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
+            ),
+            540,
+          );
         }
+
+        await delay(180);
         body.dataset.stage = 'typing';
+
+        if (streamShell instanceof HTMLElement) {
+          streamShell.style.visibility = 'visible';
+          streamShell.style.position = 'static';
+          await waitForAnimation(
+            animate(
+              streamShell,
+              {
+                opacity: [0, 1],
+                y: [26, 0],
+                scale: [0.985, 1],
+                filter: ['blur(8px)', 'blur(0px)'],
+              },
+              { duration: 0.52, ease: [0.22, 1, 0.36, 1] },
+            ),
+            600,
+          );
+        }
+
         if (statusTarget instanceof HTMLElement) {
           statusTarget.textContent = '우재윤 소개 답변을 작성하고 있습니다.';
         }
 
-        if (prefersReducedMotion) {
-          target.textContent = fullText;
-          if (statusTarget instanceof HTMLElement) {
-            statusTarget.textContent = fullText;
-          }
-          if (ctaPanel instanceof HTMLElement) {
-            ctaPanel.inert = false;
-            ctaPanel.removeAttribute('aria-hidden');
-          }
-          body.dataset.stage = 'complete';
-          return;
+        const tokens = renderStreamTokens(target, fullText);
+        await waitForAnimation(
+          animate(
+            tokens,
+            { opacity: [0, 1], y: ['0.35em', '0em'], filter: ['blur(4px)', 'blur(0px)'] },
+            { duration: 0.34, delay: stagger(0.018), ease: [0.2, 0.8, 0.2, 1] },
+          ),
+          (tokens.length * 18) + 500,
+        );
+
+        for (const token of tokens) {
+          token.style.willChange = 'auto';
         }
 
-        for (const character of fullText) {
-          if (character === ' ') {
-            target.append(document.createTextNode(' '));
-            await delay(12);
-            continue;
-          }
-
-          const token = document.createElement('span');
-          token.className = 'stream-token';
-          token.textContent = character;
-          target.append(token);
-          window.requestAnimationFrame(() => token.classList.add('is-visible'));
-          await delay(28);
-        }
         if (statusTarget instanceof HTMLElement) {
           statusTarget.textContent = fullText;
         }
-        if (ctaPanel instanceof HTMLElement) {
-          ctaPanel.inert = false;
-          ctaPanel.removeAttribute('aria-hidden');
-        }
-        body.dataset.stage = 'complete';
-      }
 
-      runIntro();
-    </script>
+        body.dataset.stage = 'complete';
+        setCtaInteractive(true);
+
+        if (ctaPanel instanceof HTMLElement) {
+          ctaPanel.style.visibility = 'visible';
+          ctaPanel.style.position = 'static';
+          await waitForAnimation(
+            animate(
+              ctaPanel,
+              { opacity: [0, 1], y: [18, 0], scale: [0.985, 1] },
+              { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+            ),
+            580,
+          );
+        }
+      } catch (error) {
+        console.error('Home intro animation failed; revealing final static state.', error);
+        revealFinalState(fullText);
+      }
+    }
+
+    runIntro();
+  </script>
+<style>
+.home-stage {
+  position: relative;
+}
+
+.home-intro {
+  width: min(100%, 48rem);
+  margin-top: min(8svh, 5rem);
+  margin-bottom: min(4svh, 2.5rem);
+  transform-origin: center top;
+}
+
+.prompt-composer {
+  transform-origin: center top;
+}
+
+[data-submit-button] {
+  box-shadow:
+    0 10px 24px color-mix(in oklab, var(--color-ink) 18%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transform-origin: center;
+}
+
+.chat-transcript {
+  position: relative;
+  min-height: clamp(24rem, 56svh, 38rem);
+  padding-top: clamp(0.5rem, 3svh, 2.5rem);
+}
+
+
+.submitted-chip > div {
+  max-width: min(92%, 34rem);
+}
+
+.stream-shell {
+  box-sizing: border-box;
+  transform-origin: center top;
+}
+
+.stream-pretext {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: -1;
+  height: auto !important;
+  min-height: 0 !important;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: none !important;
+  filter: none !important;
+}
+
+:global(.stream-token) {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.35em);
+  filter: blur(4px);
+}
+
+
+:global(.js body[data-stage='idle']) .submitted-chip,
+:global(.js body[data-stage='submitted']) .stream-shell,
+:global(.js body[data-stage='idle']) .stream-shell,
+:global(.js body[data-stage='idle']) .cta-panel,
+:global(.js body[data-stage='submitted']) .cta-panel,
+:global(.js body[data-stage='typing']) .cta-panel {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+}
+
+:global(.js body[data-stage='submitted']) .home-intro,
+:global(.js body[data-stage='typing']) .home-intro,
+:global(.js body[data-stage='complete']) .home-intro,
+:global(.js body[data-stage='submitted']) .prompt-composer,
+:global(.js body[data-stage='typing']) .prompt-composer,
+:global(.js body[data-stage='complete']) .prompt-composer {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-intro,
+  .prompt-composer,
+  .submitted-chip,
+  .stream-shell,
+  :global(.stream-token),
+  .cta-panel {
+    transform: none !important;
+    filter: none !important;
+    transition: none !important;
+  }
+
+  :global(.stream-token) {
+    opacity: 1;
+  }
+}
+</style>
 </Layout>
