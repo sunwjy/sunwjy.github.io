@@ -11,10 +11,6 @@ const intro =
   description="React, Next.js, TypeScript, NestJS와 AWS, Docker를 활용해 화면, API, 데이터 흐름, 배포 환경까지 함께 설계하고 구현하는 풀스택 개발자입니다."
   bodyStage="idle"
 >
-  <Fragment slot="head">
-    <script is:inline>document.documentElement.classList.add('js');</script>
-  </Fragment>
-
   <main class="mx-auto flex min-h-[calc(100svh-4.5rem)] w-full max-w-5xl flex-col px-5 py-8 sm:px-8 sm:py-10">
     <section
       class="home-stage flex flex-1 -translate-y-8 flex-col items-center justify-start gap-4 py-10"
@@ -141,223 +137,272 @@ const intro =
     import { animate, stagger } from 'motion';
 
     const delay = (ms: number) => new Promise((resolve) => window.setTimeout(resolve, ms));
-    const body = document.body;
-    const introBlock = document.querySelector('[data-home-intro]');
-    const target = document.querySelector('[data-stream-target]');
-    const statusTarget = document.querySelector('[data-status-target]');
-    const ctaPanel = document.querySelector('[data-cta-panel]');
-    const promptComposer = document.querySelector('[data-prompt-composer]');
-    const submitButton = document.querySelector('[data-submit-button]');
-    const submittedChip = document.querySelector('[data-submitted-chip]');
-    const toolCallingPanel = document.querySelector('[data-tool-calling-panel]');
-    const toolCallActive = document.querySelector('[data-tool-call-active]');
-    const toolCallName = document.querySelector('[data-tool-call-name]');
-    const toolCallRecap = document.querySelector('[data-tool-call-recap]');
-    const streamShell = document.querySelector('[data-stream-shell]');
-    const streamPretext = document.querySelector('[data-stream-pretext]');
-    const pretextTarget = document.querySelector('[data-pretext-target]');
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const toolCalls = ['프로필 컨텍스트 확인 중', '프로젝트 경험 요약 중', '소개 문장 구성 중'];
+    let stopHomeIntro: (() => void) | undefined;
 
     function waitForAnimation(animation: { finished: Promise<unknown> }, fallbackMs: number) {
       return Promise.race([animation.finished, delay(fallbackMs)]);
     }
 
-    function syncIntroBubbleHeight(text: string) {
-      if (
-        !(streamShell instanceof HTMLElement)
-        || !(streamPretext instanceof HTMLElement)
-        || !(pretextTarget instanceof HTMLElement)
-      ) {
+    function setupHomeIntro() {
+      stopHomeIntro?.();
+
+      const body = document.body;
+      const introBlock = document.querySelector('[data-home-intro]');
+      const target = document.querySelector('[data-stream-target]');
+      const statusTarget = document.querySelector('[data-status-target]');
+      const ctaPanel = document.querySelector('[data-cta-panel]');
+      const promptComposer = document.querySelector('[data-prompt-composer]');
+      const submitButton = document.querySelector('[data-submit-button]');
+      const submittedChip = document.querySelector('[data-submitted-chip]');
+      const toolCallingPanel = document.querySelector('[data-tool-calling-panel]');
+      const toolCallActive = document.querySelector('[data-tool-call-active]');
+      const toolCallName = document.querySelector('[data-tool-call-name]');
+      const toolCallRecap = document.querySelector('[data-tool-call-recap]');
+      const streamShell = document.querySelector('[data-stream-shell]');
+      const streamPretext = document.querySelector('[data-stream-pretext]');
+      const pretextTarget = document.querySelector('[data-pretext-target]');
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (!(target instanceof HTMLElement)) {
+        stopHomeIntro = undefined;
         return;
       }
 
-      pretextTarget.textContent = text;
-      streamShell.style.height = `${Math.ceil(streamPretext.getBoundingClientRect().height)}px`;
-    }
+      const streamTarget = target;
+      let cancelled = false;
+      let resizeHandler: (() => void) | undefined;
 
-    function setSubmittedChipAccessible(isAccessible: boolean) {
-      if (!(submittedChip instanceof HTMLElement)) return;
-
-      if (isAccessible) {
-        submittedChip.removeAttribute('aria-hidden');
-        return;
+      function isCancelled() {
+        return cancelled || !document.documentElement.contains(streamTarget);
       }
 
-      submittedChip.setAttribute('aria-hidden', 'true');
-    }
-
-    function setToolCallingAccessible(isAccessible: boolean) {
-      if (!(toolCallingPanel instanceof HTMLElement)) return;
-
-      if (isAccessible) {
-        toolCallingPanel.removeAttribute('aria-hidden');
-        return;
-      }
-
-      toolCallingPanel.setAttribute('aria-hidden', 'true');
-    }
-
-    function setToolCallMode(mode: 'active' | 'recap') {
-      if (!(toolCallingPanel instanceof HTMLElement)) return;
-
-      toolCallingPanel.dataset.mode = mode;
-      if (toolCallActive instanceof HTMLElement) toolCallActive.hidden = mode !== 'active';
-      if (toolCallRecap instanceof HTMLElement) toolCallRecap.hidden = mode !== 'recap';
-    }
-
-    function renderActiveToolCall(index: number) {
-      if (toolCallName instanceof HTMLElement) {
-        toolCallName.textContent = toolCalls[index] ?? '';
-      }
-    }
-
-    function setCtaInteractive(isInteractive: boolean) {
-      if (!(ctaPanel instanceof HTMLElement)) return;
-
-      ctaPanel.inert = !isInteractive;
-      if (isInteractive) {
-        ctaPanel.removeAttribute('aria-hidden');
-        return;
-      }
-
-      ctaPanel.setAttribute('aria-hidden', 'true');
-    }
-
-    function renderStreamTokens(element: HTMLElement, text: string) {
-      element.textContent = '';
-      return Array.from(text).map((character) => {
-        if (character === ' ') {
-          element.append(document.createTextNode(' '));
-          return null;
-        }
-
-        const token = document.createElement('span');
-        token.className = 'stream-token';
-        token.textContent = character;
-        element.append(token);
-        return token;
-      }).filter((token): token is HTMLSpanElement => token !== null);
-    }
-
-    function revealFinalState(fullText: string) {
-      if (target instanceof HTMLElement) target.textContent = fullText;
-      if (promptComposer instanceof HTMLElement) promptComposer.hidden = true;
-      if (introBlock instanceof HTMLElement) introBlock.hidden = true;
-
-      setToolCallMode('recap');
-
-      for (const element of [submittedChip, toolCallingPanel, streamShell, ctaPanel]) {
-        if (element instanceof HTMLElement) {
-          element.hidden = false;
-          element.style.visibility = 'visible';
-          element.style.position = 'static';
-          element.style.opacity = '1';
-          element.style.transform = 'none';
-          element.style.filter = 'none';
-        }
-      }
-
-      if (statusTarget instanceof HTMLElement) statusTarget.textContent = fullText;
-      body.dataset.stage = 'complete';
-      setSubmittedChipAccessible(true);
-      setToolCallingAccessible(true);
-      setCtaInteractive(true);
-    }
-
-    async function runIntro() {
-      if (!(target instanceof HTMLElement)) return;
-
-      const fullText = target.dataset.fullText ?? target.textContent ?? '';
-
-      try {
-        syncIntroBubbleHeight(fullText);
-        document.fonts?.ready.then(() => syncIntroBubbleHeight(fullText));
-        window.addEventListener('resize', () => syncIntroBubbleHeight(fullText), { passive: true });
-
-        setCtaInteractive(false);
-        setSubmittedChipAccessible(false);
-        setToolCallingAccessible(false);
-        setToolCallMode('active');
-        renderActiveToolCall(0);
-        target.textContent = '';
-
-        if (prefersReducedMotion) {
-          await delay(250);
-          revealFinalState(fullText);
+      function syncIntroBubbleHeight(text: string) {
+        if (
+          !(streamShell instanceof HTMLElement)
+          || !(streamPretext instanceof HTMLElement)
+          || !(pretextTarget instanceof HTMLElement)
+        ) {
           return;
         }
 
-        await delay(1050);
+        pretextTarget.textContent = text;
+        streamShell.style.height = `${Math.ceil(streamPretext.getBoundingClientRect().height)}px`;
+      }
 
-        if (submitButton instanceof HTMLElement) {
-          await waitForAnimation(
-            animate(
-              submitButton,
-              { scale: [1, 0.9, 1.04, 1] },
-              { duration: 0.36, ease: ['easeOut', 'easeInOut', 'easeOut'] },
-            ),
-            420,
-          );
+      function setSubmittedChipAccessible(isAccessible: boolean) {
+        if (!(submittedChip instanceof HTMLElement)) return;
+
+        if (isAccessible) {
+          submittedChip.removeAttribute('aria-hidden');
+          return;
         }
 
-        const exitTargets = [introBlock, promptComposer].filter(
-          (element): element is Element => element instanceof Element,
-        );
+        submittedChip.setAttribute('aria-hidden', 'true');
+      }
 
-        await waitForAnimation(
-          animate(
-            exitTargets,
-            { opacity: [1, 0], y: [0, -22], scale: [1, 0.985] },
-            { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
-          ),
-          400,
-        );
+      function setToolCallingAccessible(isAccessible: boolean) {
+        if (!(toolCallingPanel instanceof HTMLElement)) return;
 
+        if (isAccessible) {
+          toolCallingPanel.removeAttribute('aria-hidden');
+          return;
+        }
+
+        toolCallingPanel.setAttribute('aria-hidden', 'true');
+      }
+
+      function setToolCallMode(mode: 'active' | 'recap') {
+        if (!(toolCallingPanel instanceof HTMLElement)) return;
+
+        toolCallingPanel.dataset.mode = mode;
+        if (toolCallActive instanceof HTMLElement) toolCallActive.hidden = mode !== 'active';
+        if (toolCallRecap instanceof HTMLElement) toolCallRecap.hidden = mode !== 'recap';
+      }
+
+      function renderActiveToolCall(index: number) {
+        if (toolCallName instanceof HTMLElement) {
+          toolCallName.textContent = toolCalls[index] ?? '';
+        }
+      }
+
+      function setCtaInteractive(isInteractive: boolean) {
+        if (!(ctaPanel instanceof HTMLElement)) return;
+
+        ctaPanel.inert = !isInteractive;
+        if (isInteractive) {
+          ctaPanel.removeAttribute('aria-hidden');
+          return;
+        }
+
+        ctaPanel.setAttribute('aria-hidden', 'true');
+      }
+
+      function renderStreamTokens(element: HTMLElement, text: string) {
+        element.textContent = '';
+        return Array.from(text).map((character) => {
+          if (character === ' ') {
+            element.append(document.createTextNode(' '));
+            return null;
+          }
+
+          const token = document.createElement('span');
+          token.className = 'stream-token';
+          token.textContent = character;
+          element.append(token);
+          return token;
+        }).filter((token): token is HTMLSpanElement => token !== null);
+      }
+
+      function revealFinalState(fullText: string) {
+        if (isCancelled()) return;
+
+        streamTarget.textContent = fullText;
         if (promptComposer instanceof HTMLElement) promptComposer.hidden = true;
         if (introBlock instanceof HTMLElement) introBlock.hidden = true;
 
-        body.dataset.stage = 'submitted';
-        setSubmittedChipAccessible(true);
+        setToolCallMode('recap');
 
-        if (submittedChip instanceof HTMLElement) {
-          submittedChip.style.visibility = 'visible';
-          submittedChip.style.position = 'static';
+        for (const element of [submittedChip, toolCallingPanel, streamShell, ctaPanel]) {
+          if (element instanceof HTMLElement) {
+            element.hidden = false;
+            element.style.visibility = 'visible';
+            element.style.position = 'static';
+            element.style.opacity = '1';
+            element.style.transform = 'none';
+            element.style.filter = 'none';
+          }
+        }
+
+        if (statusTarget instanceof HTMLElement) statusTarget.textContent = fullText;
+        body.dataset.stage = 'complete';
+        setSubmittedChipAccessible(true);
+        setToolCallingAccessible(true);
+        setCtaInteractive(true);
+      }
+
+      async function runIntro() {
+        const fullText = streamTarget.dataset.fullText ?? streamTarget.textContent ?? '';
+
+        try {
+          syncIntroBubbleHeight(fullText);
+          document.fonts?.ready.then(() => syncIntroBubbleHeight(fullText));
+          resizeHandler = () => syncIntroBubbleHeight(fullText);
+          window.addEventListener('resize', resizeHandler, { passive: true });
+
+          setCtaInteractive(false);
+          setSubmittedChipAccessible(false);
+          setToolCallingAccessible(false);
+          setToolCallMode('active');
+          renderActiveToolCall(0);
+          streamTarget.textContent = '';
+
+          if (prefersReducedMotion) {
+            await delay(250);
+            revealFinalState(fullText);
+            return;
+          }
+
+          await delay(1050);
+          if (isCancelled()) return;
+
+          if (submitButton instanceof HTMLElement) {
+            await waitForAnimation(
+              animate(
+                submitButton,
+                { scale: [1, 0.9, 1.04, 1] },
+                { duration: 0.36, ease: ['easeOut', 'easeInOut', 'easeOut'] },
+              ),
+              420,
+            );
+          }
+          if (isCancelled()) return;
+
+          const exitTargets = [introBlock, promptComposer].filter(
+            (element): element is Element => element instanceof Element,
+          );
+
           await waitForAnimation(
             animate(
-              submittedChip,
-              { opacity: [0, 1], x: [24, 0], y: [12, 0] },
+              exitTargets,
+              { opacity: [1, 0], y: [0, -22], scale: [1, 0.985] },
               { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
             ),
             400,
           );
-        }
+          if (isCancelled()) return;
 
-        await delay(80);
-        body.dataset.stage = 'tool-calling';
-        setToolCallingAccessible(true);
+          if (promptComposer instanceof HTMLElement) promptComposer.hidden = true;
+          if (introBlock instanceof HTMLElement) introBlock.hidden = true;
 
-        if (toolCallingPanel instanceof HTMLElement) {
-          toolCallingPanel.hidden = false;
-          toolCallingPanel.style.visibility = 'visible';
-          toolCallingPanel.style.position = 'static';
-          await waitForAnimation(
-            animate(
-              toolCallingPanel,
-              {
-                opacity: [0, 1],
-                y: [16, 0],
-                scale: [0.99, 1],
-                filter: ['blur(6px)', 'blur(0px)'],
-              },
-              { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
-            ),
-            340,
-          );
-        }
+          body.dataset.stage = 'submitted';
+          setSubmittedChipAccessible(true);
 
-        for (let index = 0; index < toolCalls.length; index += 1) {
-          if (index > 0 && toolCallActive instanceof HTMLElement) {
+          if (submittedChip instanceof HTMLElement) {
+            submittedChip.style.visibility = 'visible';
+            submittedChip.style.position = 'static';
+            await waitForAnimation(
+              animate(
+                submittedChip,
+                { opacity: [0, 1], x: [24, 0], y: [12, 0] },
+                { duration: 0.34, ease: [0.22, 1, 0.36, 1] },
+              ),
+              400,
+            );
+          }
+          if (isCancelled()) return;
+
+          await delay(80);
+          body.dataset.stage = 'tool-calling';
+          setToolCallingAccessible(true);
+
+          if (toolCallingPanel instanceof HTMLElement) {
+            toolCallingPanel.hidden = false;
+            toolCallingPanel.style.visibility = 'visible';
+            toolCallingPanel.style.position = 'static';
+            await waitForAnimation(
+              animate(
+                toolCallingPanel,
+                {
+                  opacity: [0, 1],
+                  y: [16, 0],
+                  scale: [0.99, 1],
+                  filter: ['blur(6px)', 'blur(0px)'],
+                },
+                { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+              ),
+              340,
+            );
+          }
+          if (isCancelled()) return;
+
+          for (let index = 0; index < toolCalls.length; index += 1) {
+            if (index > 0 && toolCallActive instanceof HTMLElement) {
+              await waitForAnimation(
+                animate(
+                  toolCallActive,
+                  { opacity: [1, 0], y: [0, -6], filter: ['blur(0px)', 'blur(4px)'] },
+                  { duration: 0.12, ease: [0.4, 0, 1, 1] },
+                ),
+                160,
+              );
+              if (isCancelled()) return;
+              renderActiveToolCall(index);
+              await waitForAnimation(
+                animate(
+                  toolCallActive,
+                  { opacity: [0, 1], y: [8, 0], filter: ['blur(4px)', 'blur(0px)'] },
+                  { duration: 0.18, ease: [0.22, 1, 0.36, 1] },
+                ),
+                220,
+              );
+            }
+
+            await delay(220);
+            if (isCancelled()) return;
+          }
+
+          if (toolCallActive instanceof HTMLElement && toolCallRecap instanceof HTMLElement) {
             await waitForAnimation(
               animate(
                 toolCallActive,
@@ -366,104 +411,93 @@ const intro =
               ),
               160,
             );
-            renderActiveToolCall(index);
+            if (isCancelled()) return;
+            setToolCallMode('recap');
             await waitForAnimation(
               animate(
-                toolCallActive,
+                toolCallRecap,
                 { opacity: [0, 1], y: [8, 0], filter: ['blur(4px)', 'blur(0px)'] },
-                { duration: 0.18, ease: [0.22, 1, 0.36, 1] },
+                { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
               ),
-              220,
+              260,
             );
           }
+          if (isCancelled()) return;
 
-          await delay(220);
-        }
+          body.dataset.stage = 'typing';
 
-        if (toolCallActive instanceof HTMLElement && toolCallRecap instanceof HTMLElement) {
+          if (streamShell instanceof HTMLElement) {
+            streamShell.style.visibility = 'visible';
+            streamShell.style.position = 'static';
+            await waitForAnimation(
+              animate(
+                streamShell,
+                {
+                  opacity: [0, 1],
+                  y: [26, 0],
+                  scale: [0.985, 1],
+                  filter: ['blur(8px)', 'blur(0px)'],
+                },
+                { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+              ),
+              440,
+            );
+          }
+          if (isCancelled()) return;
+
+          if (statusTarget instanceof HTMLElement) {
+            statusTarget.textContent = '우재윤 소개 답변을 작성하고 있습니다.';
+          }
+
+          const tokens = renderStreamTokens(streamTarget, fullText);
           await waitForAnimation(
             animate(
-              toolCallActive,
-              { opacity: [1, 0], y: [0, -6], filter: ['blur(0px)', 'blur(4px)'] },
-              { duration: 0.12, ease: [0.4, 0, 1, 1] },
+              tokens,
+              { opacity: [0, 1], y: ['0.35em', '0em'], filter: ['blur(4px)', 'blur(0px)'] },
+              { duration: 0.28, delay: stagger(0.012), ease: [0.2, 0.8, 0.2, 1] },
             ),
-            160,
+            (tokens.length * 12) + 420,
           );
-          setToolCallMode('recap');
-          await waitForAnimation(
-            animate(
-              toolCallRecap,
-              { opacity: [0, 1], y: [8, 0], filter: ['blur(4px)', 'blur(0px)'] },
-              { duration: 0.2, ease: [0.22, 1, 0.36, 1] },
-            ),
-            260,
-          );
+          if (isCancelled()) return;
+
+          for (const token of tokens) {
+            token.style.willChange = 'auto';
+          }
+
+          if (statusTarget instanceof HTMLElement) {
+            statusTarget.textContent = fullText;
+          }
+
+          body.dataset.stage = 'complete';
+          setCtaInteractive(true);
+
+          if (ctaPanel instanceof HTMLElement) {
+            ctaPanel.style.visibility = 'visible';
+            ctaPanel.style.position = 'static';
+            await waitForAnimation(
+              animate(
+                ctaPanel,
+                { opacity: [0, 1], y: [18, 0], scale: [0.985, 1] },
+                { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+              ),
+              580,
+            );
+          }
+        } catch (error) {
+          console.error('Home intro animation failed; revealing final static state.', error);
+          revealFinalState(fullText);
         }
-
-        body.dataset.stage = 'typing';
-
-        if (streamShell instanceof HTMLElement) {
-          streamShell.style.visibility = 'visible';
-          streamShell.style.position = 'static';
-          await waitForAnimation(
-            animate(
-              streamShell,
-              {
-                opacity: [0, 1],
-                y: [26, 0],
-                scale: [0.985, 1],
-                filter: ['blur(8px)', 'blur(0px)'],
-              },
-              { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
-            ),
-            440,
-          );
-        }
-
-        if (statusTarget instanceof HTMLElement) {
-          statusTarget.textContent = '우재윤 소개 답변을 작성하고 있습니다.';
-        }
-
-        const tokens = renderStreamTokens(target, fullText);
-        await waitForAnimation(
-          animate(
-            tokens,
-            { opacity: [0, 1], y: ['0.35em', '0em'], filter: ['blur(4px)', 'blur(0px)'] },
-            { duration: 0.28, delay: stagger(0.012), ease: [0.2, 0.8, 0.2, 1] },
-          ),
-          (tokens.length * 12) + 420,
-        );
-
-        for (const token of tokens) {
-          token.style.willChange = 'auto';
-        }
-
-        if (statusTarget instanceof HTMLElement) {
-          statusTarget.textContent = fullText;
-        }
-
-        body.dataset.stage = 'complete';
-        setCtaInteractive(true);
-
-        if (ctaPanel instanceof HTMLElement) {
-          ctaPanel.style.visibility = 'visible';
-          ctaPanel.style.position = 'static';
-          await waitForAnimation(
-            animate(
-              ctaPanel,
-              { opacity: [0, 1], y: [18, 0], scale: [0.985, 1] },
-              { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
-            ),
-            580,
-          );
-        }
-      } catch (error) {
-        console.error('Home intro animation failed; revealing final static state.', error);
-        revealFinalState(fullText);
       }
+
+      stopHomeIntro = () => {
+        cancelled = true;
+        if (resizeHandler) window.removeEventListener('resize', resizeHandler);
+      };
+
+      runIntro();
     }
 
-    runIntro();
+    document.addEventListener('astro:page-load', setupHomeIntro);
   </script>
 <style>
 .home-stage {
