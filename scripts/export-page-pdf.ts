@@ -380,14 +380,14 @@ const pageConfigs = {
     distSubdir: 'resume',
     outputFileName: 'resume.pdf',
     pageLabel: 'Resume page',
-    requiredAssetPaths: ['/github.png', '/linkedin.png'],
+    requiredAssetPaths: ['/assets/github.png', '/assets/linkedin.png'],
   },
   experience: {
     route: '/experience/',
     distSubdir: 'experience',
     outputFileName: 'experience.pdf',
     pageLabel: 'Experience page',
-    requiredAssetPaths: ['/github.png', '/linkedin.png'],
+    requiredAssetPaths: ['/assets/github.png', '/assets/linkedin.png'],
   },
 } satisfies Record<string, ExportPagePdfOptions>;
 
